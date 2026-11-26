@@ -684,12 +684,16 @@ window.addEventListener('unhandledrejection', function(e){
         bc.postMessage({ action: 'FOCUS_PORTAL' });
         bc.close();
       } catch (err) {}
-      // Also try opener directly (works when opened via window.open)
+      // Focus opener directly if still open
       if (window.opener && !window.opener.closed) {
         try { window.opener.focus(); } catch (err) {}
       }
-      // Always navigate this tab back to the portal — guaranteed, no popup blocker
-      window.location.href = '../index.html#expanded';
+      // Focus existing 'xt_portal_main' tab (same browsing context group via rel="opener"),
+      // or spawn one if no portal tab exists.
+      const portalWin = window.open('../index.html#expanded', 'xt_portal_main');
+      if (portalWin) {
+        portalWin.focus();
+      }
     });
   } else {
     backLink.href = '../index.html#expanded';

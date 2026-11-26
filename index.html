@@ -1208,13 +1208,14 @@
       const a = document.createElement('a');
       a.href = url;
       a.target = '_blank';
-      a.rel = 'noopener noreferrer';
+      a.rel = 'opener';
       document.body.appendChild(a);
       a.dispatchEvent(new MouseEvent('click', {
         bubbles: true,
         cancelable: true,
         ctrlKey: false,
-        shiftKey: false,  // explicitly clear Alt so browser opens a tab, not a window
+        shiftKey: false,
+        altKey: false,
         metaKey: false
       }));
       document.body.removeChild(a);
