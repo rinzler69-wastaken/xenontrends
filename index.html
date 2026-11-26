@@ -1201,16 +1201,22 @@
     const cards = Array.from(document.querySelectorAll('.spotlight-card'));
     let kbdFocusedIndex = -1; // -1 = none, 0 = Confluence, 1 = Quantum
 
-    // Opens a URL in a new tab (not a new window) reliably across browsers.
-    // window.open with no size params usually opens a tab, but programmatically
-    // creating and clicking an <a target="_blank"> is the most reliable approach.
+    // Opens a URL in a new TAB (never a new window).
+    // We dispatch a plain MouseEvent with no Shift modifier so the browser
+    // doesn't inherit the held Shift key and open a window instead.
     function openInNewTab(url) {
       const a = document.createElement('a');
       a.href = url;
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
       document.body.appendChild(a);
-      a.click();
+      a.dispatchEvent(new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        ctrlKey: false,
+        shiftKey: false,  // explicitly clear Shift so browser opens a tab, not a window
+        metaKey: false
+      }));
       document.body.removeChild(a);
     }
 
