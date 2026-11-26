@@ -1154,6 +1154,11 @@
       document.body.classList.add('is-revealed');
       theTitleAnchor.style.transition = 'none';
       theTitleAnchor.style.transform = esTransform;
+      try {
+        if (window.location.hash !== '#expanded') {
+          history.replaceState(null, '', '#expanded');
+        }
+      } catch (err) { }
     }
 
     function collapseTools() {
@@ -1179,6 +1184,12 @@
         revealToolsDirect();
       } else if (window.location.hash === '') {
         collapseTools();
+      }
+    });
+
+    window.addEventListener('pageshow', () => {
+      if (window.location.hash === '#expanded') {
+        revealToolsDirect();
       }
     });
 
