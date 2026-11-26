@@ -344,6 +344,9 @@
     });
   } else {
     backLink.href = '../index.html#expanded';
+    backLink.addEventListener('click', () => {
+      try { sessionStorage.setItem('xt_force_es', '1'); } catch (err) {}
+    });
   }
 })();
 </script>

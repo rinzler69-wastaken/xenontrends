@@ -1174,29 +1174,47 @@
     revealBtn.addEventListener('click', revealTools);
     escBtn.addEventListener('click', collapseTools);
 
-    // Initial check for #expanded hash on direct load
-    if (window.location.hash === '#expanded') {
+    function shouldStartExpanded() {
+      let forced = false;
+      try {
+        forced = sessionStorage.getItem('xt_force_es') === '1';
+      } catch (err) { }
+      return window.location.hash === '#expanded' || forced;
+    }
+
+    function clearForceEsFlag() {
+      try {
+        sessionStorage.removeItem('xt_force_es');
+      } catch (err) { }
+    }
+
+    // Initial check for #expanded hash or forced ES return on direct load
+    if (shouldStartExpanded()) {
       revealToolsDirect();
+      clearForceEsFlag();
     }
 
     window.addEventListener('hashchange', () => {
       if (window.location.hash === '#expanded') {
         revealToolsDirect();
+        clearForceEsFlag();
       } else if (window.location.hash === '') {
         collapseTools();
       }
     });
 
     window.addEventListener('pageshow', () => {
-      if (window.location.hash === '#expanded') {
+      if (shouldStartExpanded()) {
         revealToolsDirect();
+        clearForceEsFlag();
       }
     });
 
     // Initialize initial coordinate calculation
     window.addEventListener('DOMContentLoaded', () => {
-      if (window.location.hash === '#expanded') {
+      if (shouldStartExpanded()) {
         revealToolsDirect();
+        clearForceEsFlag();
       }
       setTimeout(updateLerpCoordinates, 20);
     });
