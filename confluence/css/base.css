@@ -1,0 +1,76 @@
+/* ============================================================
+   BASE — reset, CSS variables, tema dasar ArgonPulse⚡
+   ============================================================ */
+
+:root{
+  --bg: #0a0c12;
+  --surface: #12151e;
+  --surface-2: #171b26;
+  --surface-raised: #1c2130;
+  --border: rgba(255,255,255,0.07);
+  --border-strong: rgba(255,255,255,0.14);
+
+  --text-1: #f4f5f7;
+  --text-2: #9aa3b8;
+  --text-3: #626b82;
+
+  --up: #21d19f;
+  --up-dim: rgba(33,209,159,0.12);
+  --down: #ff5470;
+  --down-dim: rgba(255,84,112,0.12);
+  --gold: #f5a623;
+  --gold-dim: rgba(245,166,35,0.12);
+  --violet: #8b7cf6;
+  --violet-dim: rgba(139,124,246,0.12);
+  --cyan: #3fc7d6;
+  --cyan-dim: rgba(63, 199, 214, 0.12);
+
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
+
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --ease: cubic-bezier(.16,.84,.44,1);
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{color-scheme:dark;}
+
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(139,124,246,0.10), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(33,209,159,0.06), transparent 55%),
+    var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 28px 16px 60px;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+}
+
+.wrap{max-width: 1140px; margin: 0 auto;}
+
+a{color: inherit;}
+
+[data-tooltip]{position:relative;}
+[data-tooltip]:hover::after{
+  content: attr(data-tooltip);
+  position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+  background:#000; color:#fff; padding:7px 11px; border-radius:8px;
+  font-size:11.5px; white-space:normal; width:200px; text-align:center;
+  line-height:1.4; z-index:20; box-shadow:0 10px 25px rgba(0,0,0,0.4);
+  font-family: var(--font-body); font-weight:400;
+}
+[data-tooltip]:hover::before{
+  content:''; position:absolute; bottom:calc(100% + 3px); left:50%; transform:translateX(-50%);
+  border:5px solid transparent; border-top-color:#000; z-index:20;
+}

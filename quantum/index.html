@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XT-QUANT // Institutional Screener — 65 Economophysics Engines</title>
+  
+  <!-- Typography Stacks: Space Grotesk (Display), Inter (UI), JetBrains Mono (Quantitative) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Layer 1: Navigation Top Bar -->
+  <nav class="nav-top-bar">
+    <a href="../index.html" class="nav-back-link">
+      <span>←</span>
+      <span>Terminal Portal</span>
+    </a>
+    <div class="system-badge-suite">
+      <span class="badge-system">XENONTRENDS ECOSYSTEM</span>
+      <span class="badge-system" style="color:var(--cyan);background:var(--cyan-dim);border-color:rgba(63,199,214,0.25);">QUANTUM SCAN · v3.1</span>
+    </div>
+  </nav>
+
+  <!-- Layer 2: Executive Masthead -->
+  <header class="masthead">
+    <div class="brand-section">
+      <div class="brand-mark">⚡</div>
+      <div class="brand-info">
+        <div class="brand-title-row">
+          <h1 class="brand-title">Xenon<span class="accent-text">Trends</span> Quantitative Scanner</h1>
+          <span class="brand-ticker-tag">XT-QUANT</span>
+        </div>
+        <div class="brand-sub">
+          Top 10 Bullish &amp; Bearish candidates ranked across <b id="nEngineLabel">65</b> zero-dependency economophysics engines
+        </div>
+        <div class="status-indicators" id="statusRow">
+          <span class="status-item"><span class="dot" id="dotCG"></span>CoinGecko Market Data</span>
+          <span class="status-item"><span class="dot" id="dotBN"></span>Binance Futures OI/Funding</span>
+          <span class="status-item update-time" id="lastUpdate">Belum pernah scan</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="masthead-right">
+      <div class="regime-status-badge">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--up);display:inline-block;box-shadow:0 0 8px rgba(33,209,159,0.7);"></span>
+        <span>CLIENT-SIDE QUANT ENGINE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layer 3: Dedicated Action Toolbar -->
+  <section class="action-toolbar">
+    <div class="toolbar-left">
+      <div class="select-wrapper">
+        <select id="nCoins" title="Ukuran Populasi Scanning">
+          <option value="100">Top 100 coin</option>
+          <option value="150" selected>Top 150 coin</option>
+          <option value="250">Top 250 coin</option>
+        </select>
+        <span class="select-arrow">▼</span>
+      </div>
+
+      <button id="syncBtn" class="tbtn primary-scan" onclick="runScan()" title="Mulai kalkulasi seluruh 65 engine">
+        <span>🔄</span>
+        <span>RUN SCANNER</span>
+      </button>
+
+      <div class="toolbar-divider"></div>
+
+      <button id="imgBtn" class="tbtn" onclick="saveImage()" disabled title="Simpan hasil scan sebagai gambar PNG institusional">
+        <span>🖼</span>
+        <span>Export PNG</span>
+      </button>
+
+      <button id="csvBtn" class="tbtn" onclick="saveCsv()" disabled title="Simpan seluruh hasil engine sebagai CSV (semua koin × 109 kolom)">
+        <span>📊</span>
+        <span>Export CSV</span>
+      </button>
+
+      <button id="txtBtn" class="tbtn btn-txt" onclick="saveTxt()" disabled title="Simpan SEMUA hasil dari SEMUA engine sebagai laporan TXT lengkap">
+        <span>📄</span>
+        <span>Export Audit .TXT</span>
+      </button>
+    </div>
+
+    <div class="toolbar-right">
+      <button class="tbtn" onclick="openMethodologyModal()" title="Buka arsitektur matematis 65 engine">
+        <span>📐</span>
+        <span>Methodology &amp; Architecture</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Progress Bar & Error Banner -->
+  <div id="engineProgress" class="ep-wrap" style="display:none">
+    <div class="ep-bar-bg"><div class="ep-bar"></div></div>
+    <div class="ep-label">Menyiapkan…</div>
+  </div>
+
+  <div id="errBox"></div>
+
+  <!-- Layer 4: Market Quality Score (MQS) Card -->
+  <div class="mqs-card" id="mqsCard" style="display:none">
+    <div class="mqs-num-wrap">
+      <div class="mqs-num" id="mqsNum">—</div>
+      <span class="mqs-scale-label">INDEX 0–100</span>
+    </div>
+    <div class="mqs-meta">
+      <div class="mqs-label">Market Quality Score v2 — Breadth · Funding · Risiko Sistemik · Regime Volatilitas</div>
+      <div class="mqs-zone" id="mqsZone">—</div>
+      <div class="mqs-note" id="mqsNote"></div>
+    </div>
+  </div>
+
+  <!-- Layer 5: Primary Screener Rankings -->
+  <div class="panels">
+    <!-- Bullish Panel -->
+    <div class="panel">
+      <div class="panel-head long">
+        <h2>🟢 BULLISH REGIME</h2>
+        <span class="cnt" id="longCnt">0 kandidat</span>
+      </div>
+      <div id="longList">
+        <div class="empty">Klik <b>RUN SCANNER</b> untuk memulai pemindaian kuantitatif</div>
+      </div>
+    </div>
+
+    <!-- Bearish Panel -->
+    <div class="panel">
+      <div class="panel-head short">
+        <h2>🔴 BEARISH REGIME</h2>
+        <span class="cnt" id="shortCnt">0 kandidat</span>
+      </div>
+      <div id="shortList">
+        <div class="empty">Klik <b>RUN SCANNER</b> untuk memulai pemindaian kuantitatif</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 6: Analytical Suite Tab Bar -->
+  <div class="analytics-tab-bar" id="analyticsTabBar">
+    <button class="atab active" data-tab="all" onclick="switchAnalyticsTab('all')">👁 View All Suites</button>
+    <button class="atab" data-tab="marketDash" onclick="switchAnalyticsTab('marketDash')">🌐 Market Dashboard</button>
+    <button class="atab" data-tab="engineMatrix" onclick="switchAnalyticsTab('engineMatrix')">🧮 Engine Matrix</button>
+    <button class="atab" data-tab="eventRadar" onclick="switchAnalyticsTab('eventRadar')">⚡ Event Radar</button>
+    <button class="atab" data-tab="pfGrid" onclick="switchAnalyticsTab('pfGrid')">⚖ Portfolio &amp; Clusters</button>
+  </div>
+
+  <!-- Layer 7: Analytical Suite Containers -->
+  <!-- 1. Market Dashboard -->
+  <section class="section-block" data-tab-pane="marketDash">
+    <div class="sec-title-wrap">
+      <h3 class="sec-title">🌐 Market Dashboard <span style="font-size:12px;color:var(--text-3);font-family:var(--font-mono);font-weight:400">— Jaringan Korelasi, Spektrum MP &amp; Regime Pasar</span></h3>
+    </div>
+    <div class="market-dash" id="marketDash" style="display:none"></div>
+  </section>
+
+  <!-- 2. Engine Matrix -->
+  <section class="section-block" data-tab-pane="engineMatrix">
+    <div class="sec-title-wrap">
+      <h3 class="sec-title">🧮 Engine Matrix <span style="font-size:12px;color:var(--text-3);font-family:var(--font-mono);font-weight:400">— <span id="nEngineLabel2">65</span> Engine, Distribusi &amp; Statistik Lintas-Populasi</span></h3>
+    </div>
+    <div class="engine-matrix" id="engineMatrix" style="display:none"></div>
+  </section>
+
+  <!-- 3. Event Radar -->
+  <section class="section-block" data-tab-pane="eventRadar">
+    <div class="sec-title-wrap">
+      <h3 class="sec-title">⚡ Event Radar <span style="font-size:12px;color:var(--text-3);font-family:var(--font-mono);font-weight:400">— Deteksi Anomali &amp; Ekstrema Lintas <span id="nEngineLabel3">65</span> Engine</span></h3>
+    </div>
+    <div class="event-radar" id="eventRadar" style="display:none"></div>
+  </section>
+
+  <!-- 4. Portfolio Basket & Clusters -->
+  <section class="section-block" data-tab-pane="pfGrid">
+    <div class="sec-title-wrap">
+      <h3 class="sec-title">⚖ Portfolio Basket &amp; 🧬 Cluster Map <span style="font-size:12px;color:var(--text-3);font-family:var(--font-mono);font-weight:400">— Inverse-Volatility Market Neutrality &amp; Redundancy Filter</span></h3>
+    </div>
+    <div class="pf-grid" id="pfGrid" style="display:none"></div>
+  </section>
+
+  <!-- Methodology Drawer / Accordion Section -->
+  <details class="methodology" style="margin-top:30px">
+    <summary>📐 Bagaimana skor kuantitatif ini dihitung? (Klik untuk membuka rangkuman metodologi)</summary>
+    <p style="margin-top:12px;line-height:1.7">
+      Skor akhir dihitung melalui <b>blend 60% ensemble Bayesian + 40% composite core v2</b>. Core v2 menggabungkan 5 pilar (momentum ATR-adjusted, smoothed RSI, EMA cross signal, funding rate, relative strength vs BTC) sebagai <b>z-score relatif terhadap seluruh populasi yang di-scan</b> — bukan ambang statis. Ensemble Bayesian menambahkan 16 vote berbobot invers-varian dari engine canggih (Kalman filter, Hurst exponent, Ornstein-Uhlenbeck, variance ratio, Haar wavelet, Markov chain, CUSUM drift, difusi Brownian Einstein, dll) menghasilkan probabilitas arah via fungsi logistik. Signifikansi agregat diuji menggunakan <b>metode Fisher Combined Probability</b> (χ² = −2Σln p). Seluruh stablecoin otomatis dieliminasi dari universe.
+    </p>
+    <div style="margin-top:12px">
+      <button class="tbtn" onclick="openMethodologyModal()" style="font-size:11.5px">Buka Registry 65 Engine Lengkap →</button>
+    </div>
+  </details>
+
+  <!-- Footer Disclaimer -->
+  <footer>
+    <b>⚠ DISCLAIMER INSTITUSIONAL</b> — Platform ini dikembangkan murni untuk riset kuantitatif, analisis statistika, dan preliminary screening, <b>bukan merupakan saran finansial, investasi, atau anjuran trading</b>. Seluruh data ditarik secara langsung dan real-time dari API publik CoinGecko &amp; Binance oleh browser klien Anda sendiri — arsitektur 100% client-side tanpa server perantara, tanpa transmisi kunci API, dan tanpa tracking privasi.<br><br>
+    Seluruh 65 engine dihitung dari data time series sparkline 7-hari per-jam dan kontrak derivatif futures — <b>tanpa</b> memperhitungkan slippage, biaya transaksi bursa, maupun jaminan eksekusi out-of-sample. <span class="risk">Selalu lakukan riset independen (DYOR), verifikasi likuiditas, dan terapkan protokol manajemen risiko yang ketat (position sizing &amp; stop loss).</span> Jika terjadi rate-limiting pada API gratis, mohon jeda 60 detik sebelum melakukan pemindaian ulang.
+  </footer>
+
+</div>
+
+<!-- Coin Detail Modal Overlay -->
+<div class="modal-overlay" id="engineModal" onclick="closeCoinModal()"></div>
+
+<!-- Methodology & Mathematical Architecture Modal -->
+<div class="methodology-modal" id="methodologyModal" onclick="closeMethodologyModal()">
+  <div class="methodology-box" onclick="event.stopPropagation()">
+    <div class="methodology-header">
+      <div>
+        <div class="methodology-title">📐 Institutional Methodology &amp; Mathematical Architecture</div>
+        <div style="font-size:12px;color:var(--text-3);font-family:var(--font-mono);margin-top:4px">
+          Sintesis 65 Engine Ekonofisika &amp; Statistika Lintas 14 Famili Kuantitatif
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeMethodologyModal()">✕</button>
+    </div>
+
+    <div class="methodology-content">
+      <p>
+        Quantum Screener (XT-QUANT) mengimplementasikan model ekonofisika non-parametrik yang mengevaluasi seluruh koin dalam semesta secara simultan menggunakan cross-sectional normalization. Skor akhir menggabungkan Bayesian Ensemble 16-vote dengan Core Momentum v2 dan Smart Quality Multiplier (OOS walk-forward validation &amp; choppiness penalty).
+      </p>
+
+      <table class="methodology-table">
+        <tbody>
+          <tr>
+            <td>A · Volatilitas &amp; Regime</td>
+            <td>GARCH(1,1) MLE (Engle/Bollerslev), Realized Volatility Term Structure (24h/72h/168h), Parkinson Extreme Value, Garman-Klass, Vol-of-Vol (VoV), Bollinger Bandwidth Squeeze, Donchian Channel, Amihud Illiquidity Ratio</td>
+          </tr>
+          <tr>
+            <td>B · Mean Reversion &amp; Fraktal</td>
+            <td>Ornstein-Uhlenbeck Continuous Process (Uhlenbeck 1930), Augmented Dickey-Fuller t-statistic, Hurst Exponent R/S (Hurst 1951), Detrended Fluctuation Analysis (DFA Peng 1994), Lo-MacKinlay Variance Ratio (1988), Katz &amp; Higuchi Fractal Dimensions, Rice Level-Crossing Expectation (1945)</td>
+          </tr>
+          <tr>
+            <td>C · Teori Informasi</td>
+            <td>Shannon Information Entropy (1948), Permutation Entropy (Bandt-Pompe 2002), Lempel-Ziv LZ76 Algorithmic Complexity (1976), Spectral Flatness Wiener Measure, Kolmogorov-Smirnov Empirical Normality Test</td>
+          </tr>
+          <tr>
+            <td>D · Momen &amp; Chaos</td>
+            <td>Higher Moments Skewness &amp; Kurtosis + Jarque-Bera Test (1980), Hill Power-Law Tail Index (1975), Zipf Rank-Frequency Exponent, Largest Lyapunov Exponent Chaos (Rosenstein 1993), Drawdown Duration &amp; Ulcer Index</td>
+          </tr>
+          <tr>
+            <td>E · Pemrosesan Sinyal</td>
+            <td>FFT Periodogram Peak Identification &amp; Parabolic Interpolation, Spectral Entropy, Haar Wavelet Multiresolution Analysis (1910), Hilbert Analytic Transform &amp; Instantaneous Cycle Phase (Gabor 1946), Ehlers Fisher Transform</td>
+          </tr>
+          <tr>
+            <td>F · State-Space &amp; Filtering</td>
+            <td>Kalman Local Linear Trend State-Space Estimator (Kálmán 1960), Hodrick-Prescott Trend-Cycle Decomposition (1997), Page CUSUM Change-Point Detection (1954), Ehlers Super Smoother 2-Pole Filter, Savitzky-Golay Polynomial Differentiation</td>
+          </tr>
+          <tr>
+            <td>G · Ekonofisika &amp; Difusi</td>
+            <td>Einstein Brownian Diffusion ⟨x²⟩=2Dt (1905), Markov 2-State Regime Transition Matrix (1906), Ljung-Box Q Autocorrelation Test (1978), Kaufman Adaptive Efficiency Ratio, Choppiness Index, Lagged Cross-Correlation vs BTC (Granger proxy)</td>
+          </tr>
+          <tr>
+            <td>H · Teori Portofolio</td>
+            <td>OLS Beta &amp; Jensen's Alpha vs BTC (CAPM), Idiosyncratic Residual Volatility, Bivariate Upper/Lower Tail Dependence (λU/λL), Sharpe &amp; Sortino Ratios, Information Ratio, Kelly Criterion &amp; Half-Kelly (1956), Parametric &amp; Historical VaR 95%, Block-Bootstrap Monte Carlo 2000 Paths (Efron/Künsch), S/R Kernel Density Clustering</td>
+          </tr>
+          <tr>
+            <td>I · Dinamika Pasar</td>
+            <td>Jacobi Eigen-Spectrum Decomposition (1846) of Top-40 Correlation Matrix, Marchenko-Pastur Random Matrix Noise Limit (1967), Kritzman Absorption Ratio Systemic Risk (2009), 24h Advance/Decline Breadth, Cross-Sectional Return Dispersion, McClellan Oscillator 1h, Market Quality Score v2</td>
+          </tr>
+          <tr>
+            <td>K · Walk-Forward</td>
+            <td>Rolling Mini Out-of-Sample Hit-Rate Validation: mengevaluasi persistensi prediktif sinyal momentum 24j/48j/72j ke depan secara historis</td>
+          </tr>
+          <tr>
+            <td>L · Portofolio Pasar</td>
+            <td>Inverse-Volatility Weighted Long/Short Market-Neutral Basket, Full Covariance Portfolio Volatility, Net Beta Neutrality, Daily Portfolio VaR95</td>
+          </tr>
+          <tr>
+            <td>M · Event Radar</td>
+            <td>Cross-Engine Anomaly Scanner: deteksi serentak Bollinger Squeeze, CUSUM structural break, Kalman innovation shock, dan Monte Carlo skew</td>
+          </tr>
+          <tr>
+            <td>N · Cluster Korelasi</td>
+            <td>Average-Linkage Hierarchical Clustering pada metrik jarak korelasi d = √(2(1−ρ)) untuk eliminasi aset berkorelasi tinggi (redundancy filter)</td>
+          </tr>
+          <tr>
+            <td>J · Meta-Ensemble</td>
+            <td>16-Vote Inverse-Variance Weighted Bayesian Ensemble, Fisher Combined Probability Test (χ² = −2Σln p, 1934), Confidence-Weighted Score Scaling, Historical Scan Persistence Delta</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:11.5px;color:var(--text-3);margin-top:14px">
+        <b>Pedoman Interpretasi:</b> Klik baris koin mana pun pada panel Bullish atau Bearish setelah pemindaian selesai untuk membuka rincian modal 65 engine komprehensif, kurva pita konfidensi Monte Carlo 24-jam, dan persentil populasi.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container for Notifications -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Engine & Application Scripts -->
+<script src="engines.js?v=31"></script>
+<script>
+  // Bind dynamic engine count from registry to all label elements
+  const regLen = (typeof QE !== 'undefined' && QE.ENGINE_REGISTRY) ? QE.ENGINE_REGISTRY.length : 65;
+  document.getElementById('nEngineLabel').textContent = regLen;
+  document.getElementById('nEngineLabel2').textContent = regLen;
+  document.getElementById('nEngineLabel3').textContent = regLen;
+  document.title = 'XT-QUANT // Institutional Screener — ' + regLen + ' Engines';
+</script>
+<script src="app.js?v=31"></script>
+</body>
+</html>

@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XenonTrends — Next-Gen Quantitative Crypto Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06070a;
+      --card-bg: rgba(12, 16, 25, 0.78);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --neon-cyan: #00f2fe;
+      --neon-blue: #38bdf8;
+      --neon-magenta: #f43f5e;
+      --neon-purple: #c084fc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden; /* Strictly zero scroll */
+      position: relative;
+    }
+
+    /* Interactive Dot Matrix Canvas */
+    #matrixCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Ambient Cosmic Vignette */
+    .vignette-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(6, 7, 10, 0.6) 75%, rgba(6, 7, 10, 0.95) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Main Viewport Stage */
+    .viewport-stage {
+      position: relative;
+      z-index: 2;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Master Stage: exactly 960px wide x 520px high */
+    .app-stage {
+      position: relative;
+      width: 960px;
+      height: 520px;
+    }
+
+    /* Cosmic Nebulae */
+    .nebula-glow {
+      position: absolute;
+      top: 130px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 580px;
+      height: 260px;
+      background: radial-gradient(ellipse at center, 
+        rgba(0, 242, 254, 0.25) 0%, 
+        rgba(147, 51, 234, 0.18) 35%, 
+        rgba(244, 63, 94, 0.12) 60%, 
+        transparent 80%);
+      filter: blur(65px);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.9;
+      animation: nebulaFloat 12s ease-in-out infinite alternate;
+      transition: all 0.8s ease;
+    }
+
+    @keyframes nebulaFloat {
+      0% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        filter: blur(65px);
+      }
+      50% {
+        transform: translate(-48%, -52%) scale(1.1) rotate(3deg);
+        filter: blur(80px);
+      }
+      100% {
+        transform: translate(-52%, -48%) scale(0.95) rotate(-3deg);
+        filter: blur(60px);
+      }
+    }
+
+    body.is-revealed .nebula-glow {
+      top: 30px;
+      width: 720px;
+      height: 140px;
+      opacity: 0.55;
+    }
+
+    /* Shared Typography Token */
+    .brand-heading {
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+      background: linear-gradient(135deg, #ffffff 20%, #e2e8f0 55%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      white-space: nowrap;
+    }
+
+    .glow-accent {
+      background: linear-gradient(135deg, #00f2fe 0%, #38bdf8 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ==========================================================================
+       LAYER 1: UNEXPANDED STATE (UES) LAYER
+       ========================================================================== */
+    .ues-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    body.is-revealed .ues-layer {
+      pointer-events: none;
+    }
+
+    .ues-fader {
+      opacity: 1;
+      transition: opacity 0.35s ease;
+    }
+
+    body.is-revealed .ues-fader {
+      opacity: 0;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      color: #38bdf8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.35rem 0.95rem;
+      border-radius: 9999px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+      margin-bottom: 1.25rem;
+      white-space: nowrap;
+    }
+
+    .badge-pulse {
+      width: 7px;
+      height: 7px;
+      background: #00f2fe;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00f2fe;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
+    /* 
+       THE ONE TRUE PERMANENT TITLE:
+       Rendered once in the DOM. Never destroyed, never swapped!
+       Settles perfectly in UES (scale 1.86, translate to center).
+       Settles perfectly in ES (scale 1.0, translate to 0,0).
+       Zero blip, zero bergeming, zero snap!
+    */
+    .the-title-anchor {
+      display: inline-block;
+      transform-origin: 0 0;
+      will-change: transform;
+      transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      margin: 0;
+      flex-shrink: 0;
+      z-index: 25;
+    }
+
+    .the-title-heading {
+      font-size: 2.15rem;
+      letter-spacing: -0.025em;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .desc-ues {
+      width: 100%;
+      max-width: 680px;
+      text-align: center;
+      font-size: 1.12rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 1.15rem;
+      margin-bottom: 2.2rem;
+    }
+
+    .btn-reveal {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 2.1rem;
+      font-size: 0.98rem;
+      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 9999px;
+      cursor: pointer;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      overflow: hidden;
+    }
+
+    .btn-reveal::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.25), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.75s ease;
+    }
+
+    .btn-reveal:hover::before {
+      transform: translateX(100%);
+    }
+
+    .btn-reveal:hover {
+      transform: translateY(-2px) scale(1.02);
+      border-color: rgba(0, 242, 254, 0.5);
+      box-shadow: 0 12px 30px -5px rgba(0, 242, 254, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-reveal .icon-ring {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: rgba(0, 242, 254, 0.15);
+      border-radius: 50%;
+      color: #00f2fe;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-reveal:hover .icon-ring {
+      transform: rotate(90deg) scale(1.1);
+    }
+
+    /* ==========================================================================
+       LAYER 2: EXPANDED STATE (ES) LAYER
+       Fixed Container: [ESC] > [Title Slot] > [Divider] > [Desc Curtain]
+       ========================================================================== */
+    .es-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    body.is-revealed .es-layer {
+      pointer-events: auto;
+    }
+
+    .es-header-suite {
+      position: absolute;
+      top: 6px;
+      left: 0;
+      width: 100%;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 1.15rem;
+      z-index: 12;
+    }
+
+    /* 1. ESC Button */
+    .btn-esc {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.38rem 0.75rem;
+      border-radius: 9999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      outline: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    body.is-revealed .btn-esc {
+      opacity: 1;
+      transition-delay: 0.2s;
+    }
+
+    .btn-esc kbd {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .btn-esc:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: rgba(0, 242, 254, 0.4);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+    }
+
+    /* 
+       The ES Title Slot:
+       Fits the title's exact natural width so the divider hugs it tightly with zero awkward gap!
+    */
+    .title-slot {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      width: fit-content;
+      height: 100%;
+    }
+
+    /* Static Divider */
+    .title-desc-separator {
+      width: 1px;
+      height: 38px;
+      background: linear-gradient(180deg, rgba(0, 242, 254, 0.8), rgba(244, 63, 94, 0.8));
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    body.is-revealed .title-desc-separator {
+      opacity: 0.85;
+      transition-delay: 0.2s;
+    }
+
+    /* Hidden Room Curtain (Desc unfolds out from behind divider) */
+    .desc-curtain {
+      position: relative;
+      overflow: hidden;
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    body.is-revealed .desc-curtain {
+      opacity: 1;
+    }
+
+    .desc-es-text {
+      font-size: 0.87rem;
+      line-height: 1.55;
+      color: #94a3b8;
+      text-align: left;
+      transform: translateX(-100%);
+      transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.is-revealed .desc-es-text {
+      transform: translateX(0); /* Unfolds cleanly concurrently with lerp */
+    }
+
+    /* ==========================================================================
+       ES TOOLS CONTAINER
+       ========================================================================== */
+    .tools-container {
+      position: absolute;
+      top: 84px;
+      left: 0;
+      width: 100%;
+      height: 436px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(30px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10;
+    }
+
+    body.is-revealed .tools-container {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      transition-delay: 0.15s;
+    }
+
+    .tiles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      height: 100%;
+      align-items: stretch;
+    }
+
+    /* Spotlight Card */
+    .spotlight-card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: 1.25rem;
+      padding: 1.85rem 1.85rem 1.65rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.8);
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+      --spot-opacity: 0;
+    }
+
+    .spotlight-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Base border: Resting subtle, on hover 50% brightness accent */
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 1.25rem;
+      padding: 1.5px;
+      background: rgba(255, 255, 255, 0.08);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      transition: background 0.35s ease;
+    }
+
+    .spotlight-card.tool-blue:hover::before {
+      background: rgba(0, 242, 254, 0.50);
+    }
+
+    .spotlight-card.tool-magenta:hover::before {
+      background: rgba(244, 63, 94, 0.50);
+    }
+
+    /* Proximity Border: 75% brightness spotlight near cursor */
+    .spotlight-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 1.25rem;
+      padding: 2px;
+      opacity: var(--spot-opacity);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .spotlight-card.tool-blue::after {
+      background: radial-gradient(240px circle at var(--mouse-x) var(--mouse-y), 
+        rgba(0, 242, 254, 0.75) 0%, 
+        rgba(56, 189, 248, 0.55) 45%, 
+        transparent 75%);
+    }
+
+    .spotlight-card.tool-magenta::after {
+      background: radial-gradient(240px circle at var(--mouse-x) var(--mouse-y), 
+        rgba(244, 63, 94, 0.75) 0%, 
+        rgba(192, 132, 252, 0.55) 45%, 
+        transparent 75%);
+    }
+
+    /* Internal subtle glow fill */
+    .card-spotlight-fill {
+      position: absolute;
+      inset: 0;
+      border-radius: 1.25rem;
+      opacity: var(--spot-opacity);
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    .spotlight-card.tool-blue .card-spotlight-fill {
+      background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), 
+        rgba(0, 242, 254, 0.08) 0%, 
+        transparent 75%);
+    }
+
+    .spotlight-card.tool-magenta .card-spotlight-fill {
+      background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), 
+        rgba(244, 63, 94, 0.09) 0%, 
+        transparent 75%);
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    .card-top {
+      margin-bottom: 1.25rem;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.95rem;
+    }
+
+    .tool-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.28rem 0.7rem;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .tool-blue .tool-badge {
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      color: #38bdf8;
+    }
+
+    .tool-magenta .tool-badge {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: #fb7185;
+    }
+
+    .tool-version {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .tool-meta-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tool-sub-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.25rem 0.55rem;
+      border-radius: 5px;
+      letter-spacing: 0.03em;
+    }
+
+    .tool-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.55rem;
+      color: #ffffff;
+    }
+
+    .tool-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.15rem;
+      min-height: 4.8em;
+    }
+
+    .feature-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag-item {
+      font-size: 0.74rem;
+      padding: 0.25rem 0.6rem;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 6px;
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .card-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1.1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .launch-label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: gap 0.25s ease;
+    }
+
+    .tool-blue .launch-label {
+      color: #38bdf8;
+    }
+
+    .tool-magenta .launch-label {
+      color: #fb7185;
+    }
+
+    .spotlight-card:hover .launch-label {
+      gap: 0.75rem;
+    }
+
+    .launch-indicator {
+      font-size: 1.05rem;
+      transition: transform 0.25s ease;
+    }
+
+    .spotlight-card:hover .launch-indicator {
+      transform: translateX(4px);
+    }
+
+    @media (max-width: 980px) {
+      .app-stage {
+        width: 94vw;
+      }
+      .desc-curtain, .title-desc-separator {
+        display: none;
+      }
+      .tiles-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+      .tool-desc {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Interactive Dot Matrix -->
+  <canvas id="matrixCanvas"></canvas>
+
+  <!-- Vignette Ambience -->
+  <div class="vignette-overlay"></div>
+
+  <main class="viewport-stage">
+    <!-- Master App Stage (Fixed Geometry 960x520) -->
+    <div class="app-stage" id="appStage">
+      <div class="nebula-glow"></div>
+      
+      <!-- ===================================================================
+           LAYER 1: UNEXPANDED STATE (UES) PERIPHERALS
+           =================================================================== -->
+      <div class="ues-layer" id="uesLayer">
+        <div class="badge-pill ues-fader">
+          <span class="badge-pulse"></span>
+          Institutional Quantitative Ecosystem
+        </div>
+
+        <!-- UES Ghost Reference Slot (Holds pure dead-center space) -->
+        <div id="uesCenterSlot" style="height: 60px; display: flex; align-items: center; justify-content: center; width: 100%;"></div>
+
+        <p class="desc-ues ues-fader">
+          Next-generation quantitative crypto terminal synthesizing 5-pillar composite market confluence with a 65-engine institutional economophysics screener.
+        </p>
+
+        <div class="cta-wrapper ues-fader">
+          <button class="btn-reveal" id="revealBtn">
+            <span>Explore Terminal Suite</span>
+            <span class="icon-ring">↓</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           LAYER 2: EXPANDED STATE (ES)
+           Rigid Header Suite: ESC, Divider, and Curtain stick to Title Slot!
+           =================================================================== -->
+      <div class="es-layer" id="esLayer">
+        
+        <header class="es-header-suite">
+          <!-- 1. ESC Button -->
+          <button class="btn-esc" id="escBtn" title="Press Escape to collapse">
+            <kbd>ESC</kbd> <span>BACK</span>
+          </button>
+
+          <!-- 2. Permanent Title Slot (Houses The One True Title) -->
+          <div class="title-slot" id="esTitleSlot">
+            <!-- THE ONE TRUE PERMANENT TITLE (Never swapped, never destroyed) -->
+            <div class="the-title-anchor" id="theTitleAnchor">
+              <h1 class="brand-heading the-title-heading">
+                Xenon<span class="glow-accent">Trends</span>
+              </h1>
+            </div>
+          </div>
+
+          <!-- 3. Static Divider (Sticks physically to title slot) -->
+          <div class="title-desc-separator"></div>
+
+          <!-- 4. Hidden Room Curtain (Desc unfolds out from behind divider) -->
+          <div class="desc-curtain">
+            <p class="desc-es-text">
+              Next-generation quantitative crypto terminal synthesizing 5-pillar composite market confluence with a 65-engine institutional economophysics screener.
+            </p>
+          </div>
+        </header>
+
+        <!-- ES Tools Suite Grid -->
+        <section class="tools-container" id="toolsContainer">
+          <div class="tiles-grid">
+
+            <!-- Tool 1: Confluence Radar (Neon Blue) -->
+            <a href="confluence/index.html" class="spotlight-card tool-blue">
+              <div class="card-spotlight-fill"></div>
+              <div class="card-content">
+                <div class="card-top">
+                  <div class="card-meta">
+                    <div class="tool-meta-left">
+                      <span class="tool-badge">XT-CONF</span>
+                      <span class="tool-sub-badge">Pillar Synthesis</span>
+                    </div>
+                    <span class="tool-version">v2.4 Genius</span>
+                  </div>
+                  <h2 class="tool-title">Confluence Radar</h2>
+                  <p class="tool-desc">
+                    Multi-asset macro & morning-brief radar computing Weighted Composite Confluence Scores (WCCS) across price action, momentum, sentiment, on-chain flows, and derivatives.
+                  </p>
+                  <div class="feature-tags">
+                    <span class="tag-item">5-Pillar WCCS</span>
+                    <span class="tag-item">Watchtower Alerts</span>
+                    <span class="tag-item">Market Heatmap</span>
+                  </div>
+                </div>
+                <div class="card-action">
+                  <span class="launch-label">Launch Radar <span class="launch-indicator">→</span></span>
+                </div>
+              </div>
+            </a>
+
+            <!-- Tool 2: Quantum Screener (Neon Magenta) -->
+            <a href="quantum/index.html" class="spotlight-card tool-magenta">
+              <div class="card-spotlight-fill"></div>
+              <div class="card-content">
+                <div class="card-top">
+                  <div class="card-meta">
+                    <div class="tool-meta-left">
+                      <span class="tool-badge">XT-QUANT</span>
+                      <span class="tool-sub-badge">Economophysics</span>
+                    </div>
+                    <span class="tool-version">v3.1 Quantum</span>
+                  </div>
+                  <h2 class="tool-title">Quantum Screener</h2>
+                  <p class="tool-desc">
+                    Institutional algorithmic screener ranking Top 10 Bullish and Bearish regimes using 65 zero-dependency mathematical engines across 14 statistical families.
+                  </p>
+                  <div class="feature-tags">
+                    <span class="tag-item">65 Quant Engines</span>
+                    <span class="tag-item">GARCH & Kalman</span>
+                    <span class="tag-item">Jacobi Spectrum</span>
+                  </div>
+                </div>
+                <div class="card-action">
+                  <span class="launch-label">Launch Screener <span class="launch-indicator">→</span></span>
+                </div>
+              </div>
+            </a>
+
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    /* ==========================================================================
+       1. INTERACTIVE DOT MATRIX CANVAS (Smooth Aura Hover Glow)
+       ========================================================================== */
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const mouse = {
+      x: -1000,
+      y: -1000,
+      radius: 170
+    };
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      updateLerpCoordinates();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
+
+    const DOT_SPACING = 34;
+    const BASE_DOT_RADIUS = 1.2;
+
+    function renderMatrix() {
+      ctx.clearRect(0, 0, width, height);
+
+      const cols = Math.ceil(width / DOT_SPACING);
+      const rows = Math.ceil(height / DOT_SPACING);
+
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          const x = i * DOT_SPACING;
+          const y = j * DOT_SPACING;
+
+          const dx = mouse.x - x;
+          const dy = mouse.y - y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          let alpha = 0.12;
+          let radius = BASE_DOT_RADIUS;
+          let glowR = 100, glowG = 140, glowB = 180;
+
+          if (dist < mouse.radius) {
+            const factor = 1 - dist / mouse.radius;
+            alpha = 0.12 + factor * 0.78;
+            radius = BASE_DOT_RADIUS + factor * 1.5;
+
+            glowR = Math.round(100 + factor * 80);
+            glowG = Math.round(140 + factor * 110);
+            glowB = Math.round(180 + factor * 75);
+          }
+
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${glowR}, ${glowG}, ${glowB}, ${alpha})`;
+          ctx.fill();
+        }
+      }
+
+      requestAnimationFrame(renderMatrix);
+    }
+
+    renderMatrix();
+
+    /* ==========================================================================
+       2. SINGLE PERMANENT TITLE LERP ENGINE
+          The title is a single permanent DOM node.
+          In UES: transformed to dead center with scale 1.86.
+          In ES:  transformed to 0,0 with scale 1.0.
+          ZERO swap, ZERO handoff, ZERO bergeming, ZERO snap!
+       ========================================================================== */
+    const theTitleAnchor = document.getElementById('theTitleAnchor');
+    const uesCenterSlot = document.getElementById('uesCenterSlot');
+    const esTitleSlot = document.getElementById('esTitleSlot');
+    const revealBtn = document.getElementById('revealBtn');
+    const escBtn = document.getElementById('escBtn');
+
+    let uesTransform = '';
+    const esTransform = 'translate(0px, 0px) scale(1)';
+
+    function updateLerpCoordinates() {
+      // Calculate exact pixel vector between esTitleSlot and uesCenterSlot
+      const uesRect = uesCenterSlot.getBoundingClientRect();
+      const esRect = esTitleSlot.getBoundingClientRect();
+      const titleRect = theTitleAnchor.getBoundingClientRect();
+
+      // UES Title is scaled up 1.86x (from 2.15rem -> 4.0rem)
+      const targetScale = 1.86;
+      const naturalWidth = theTitleAnchor.offsetWidth;
+      const naturalHeight = theTitleAnchor.offsetHeight;
+
+      const scaledWidth = naturalWidth * targetScale;
+      const scaledHeight = naturalHeight * targetScale;
+
+      // Center of uesCenterSlot
+      const targetCenterX = uesRect.left + uesRect.width / 2;
+      const targetCenterY = uesRect.top + uesRect.height / 2;
+
+      // Top-left coordinate needed for theTitleAnchor to be dead centered
+      const targetLeft = targetCenterX - scaledWidth / 2;
+      const targetTop = targetCenterY - scaledHeight / 2;
+
+      // Delta relative to esRect
+      const deltaX = targetLeft - esRect.left;
+      const deltaY = targetTop - esRect.top;
+
+      uesTransform = `translate(${Math.round(deltaX)}px, ${Math.round(deltaY)}px) scale(${targetScale})`;
+
+      // Apply resting position if not revealed
+      if (!document.body.classList.contains('is-revealed')) {
+        theTitleAnchor.style.transition = 'none';
+        theTitleAnchor.style.transform = uesTransform;
+      }
+    }
+
+    // Initialize initial coordinate calculation
+    window.addEventListener('DOMContentLoaded', () => {
+      // Allow DOM layout pass
+      setTimeout(updateLerpCoordinates, 20);
+    });
+
+    // In case fonts load late
+    if (document.fonts) {
+      document.fonts.ready.then(updateLerpCoordinates);
+    }
+
+    function revealTools() {
+      if (document.body.classList.contains('is-revealed')) return;
+      theTitleAnchor.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)';
+      theTitleAnchor.style.transform = esTransform;
+      document.body.classList.add('is-revealed');
+    }
+
+    function collapseTools() {
+      if (!document.body.classList.contains('is-revealed')) return;
+      theTitleAnchor.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)';
+      theTitleAnchor.style.transform = uesTransform;
+      document.body.classList.remove('is-revealed');
+    }
+
+    revealBtn.addEventListener('click', revealTools);
+    escBtn.addEventListener('click', collapseTools);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        collapseTools();
+      }
+    });
+
+    /* ==========================================================================
+       3. SPOTLIGHT BORDER & CURSOR TRACKING
+       ========================================================================== */
+    const cards = document.querySelectorAll('.spotlight-card');
+
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+        card.style.setProperty('--spot-opacity', '1');
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--spot-opacity', '0');
+      });
+    });
+  </script>
+</body>
+</html>

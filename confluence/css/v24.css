@@ -1,0 +1,198 @@
+/* ============================================================
+   V2.4 — Menara Pengawas, Heatmap, Grafik Besar,
+   Panel Pengaturan, baris eksperimen.
+   Mengikuti konvensi visual v2.3: kartu gelap, aksen sempit,
+   tanpa dekorasi yang tidak membawa informasi.
+   ============================================================ */
+
+/* ---------- banner error boot (diagnostik) ---------- */
+.boot-error{
+  display: none; margin: 0 0 14px;
+  background: var(--down-dim); border: 1px solid rgba(255,84,112,.45);
+  color: var(--text-1); font-size: 13px; line-height: 1.5;
+  border-radius: var(--radius-md); padding: 12px 14px;
+}
+
+/* ---------- chip versi di toolbar ---------- */
+.version-chip{
+  font-size: 10.5px; font-weight: 700; letter-spacing: .06em;
+  color: var(--violet); background: var(--violet-dim);
+  border: 1px solid rgba(139,124,246,.35);
+  padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+}
+
+/* ---------- banner alarm Menara Pengawas ---------- */
+.watch-banner{
+  display: none;
+  background: linear-gradient(135deg, rgba(245,166,35,.10), rgba(139,124,246,.07));
+  border: 1px solid rgba(245,166,35,.35);
+  border-radius: var(--radius-md);
+  padding: 12px 14px; margin-bottom: 14px;
+}
+.watch-banner.show{ display: block; }
+.wb-head{
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--gold);
+  margin-bottom: 8px;
+}
+.wb-row{
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 7px 0; border-top: 1px dashed rgba(255,255,255,.07);
+}
+.wb-ico{ font-size: 14px; line-height: 1.3; }
+.wb-row b{ display: block; font-size: 13.5px; }
+.wb-body{ font-size: 12.5px; color: var(--text-2); line-height: 1.45; margin-top: 1px; }
+.wb-warn .wb-ico{ filter: saturate(1.4); }
+
+/* ---------- panel grafik besar ---------- */
+.bigchart-panel{ margin: 18px 0; }
+.bc-toolbar{
+  display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;
+}
+.bc-title{ font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); }
+.bc-now{ font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--text-1); }
+.bc-chart svg{ width: 100%; height: auto; display: block; }
+
+/* ---------- heatmap ---------- */
+.heatmap-panel{ margin: 18px 0; }
+.hm-toolbar{ display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.hm-legend{ font-size: 11px; color: var(--text-3); display: flex; align-items: center; }
+.hm-chip{ display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 5px; }
+.hm-switch{ display: flex; gap: 4px; }
+.hm-btn{
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-2); font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 999px; cursor: pointer;
+}
+.hm-btn.active{ background: var(--violet-dim); color: var(--violet); border-color: rgba(139,124,246,.4); }
+.tm-grid{ display: flex; flex-wrap: wrap; gap: 4px; }
+.tm-tile{
+  min-width: 58px; min-height: 44px; flex-basis: 0;
+  border-radius: 7px; padding: 6px 8px; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border: 1px solid rgba(255,255,255,.05); cursor: default;
+}
+.tm-ticker{ font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: .03em; }
+.tm-chg{ font-family: var(--font-mono); font-size: 10.5px; color: var(--text-2); }
+
+/* ---------- baris eksperimen bobot ---------- */
+.exp-row{
+  display: none;
+  margin: 12px 0 0; padding: 10px 14px;
+  background: rgba(63,199,214,.07);
+  border: 1px dashed rgba(63,199,214,.4);
+  border-radius: var(--radius-md);
+  font-size: 12.5px; line-height: 1.55; color: var(--text-2);
+}
+.exp-row.show{ display: block; }
+.exp-row b{ color: var(--cyan); }
+
+/* ---------- panel menara pengawas ---------- */
+.wt-grid{ display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 14px; }
+@media (max-width: 900px){ .wt-grid{ grid-template-columns: 1fr; } }
+.wt-card{
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 12px 14px; min-width: 0;
+}
+.wt-card-head{
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--text-2);
+  margin-bottom: 10px;
+}
+.wt-actions{ display: flex; gap: 8px; margin-top: 10px; }
+.wt-hist-row{
+  display: flex; gap: 9px; padding: 7px 0;
+  border-top: 1px dashed rgba(255,255,255,.06); opacity: .68;
+}
+.wt-hist-row.unack{ opacity: 1; }
+.wt-hist-row b{ font-size: 12.5px; display: block; }
+.wt-hist-row .wb-body{ font-size: 11.5px; }
+.wt-hist-time{ font-size: 10px; color: var(--text-3); margin-top: 2px; font-family: var(--font-mono); }
+
+.wt-pa-form{
+  display: grid; grid-template-columns: auto 1fr auto auto; gap: 6px; margin-bottom: 10px;
+}
+.wt-pa-form select, .wt-pa-form input{
+  background: var(--surface-raised); color: var(--text-1);
+  border: 1px solid var(--border-strong); border-radius: 7px;
+  padding: 6px 8px; font-size: 12px; min-width: 0;
+}
+.wt-pa-form input{ width: 90px; }
+.wt-pa-row{
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; border-top: 1px dashed rgba(255,255,255,.06);
+  font-size: 12.5px;
+}
+.wt-pa-row.done{ opacity: .55; }
+.wt-pa-status{ margin-left: auto; font-size: 11px; color: var(--text-3); }
+.wt-pa-del{
+  background: none; border: none; color: var(--text-3); cursor: pointer;
+  font-size: 12px; padding: 2px 5px;
+}
+.wt-pa-del:hover{ color: var(--down); }
+
+.wt-rules{ display: flex; flex-direction: column; gap: 2px; }
+.wt-rule-row{
+  display: flex; justify-content: space-between; gap: 8px;
+  font-size: 12px; padding: 4px 0;
+  border-top: 1px dashed rgba(255,255,255,.05);
+}
+.wt-rule-row:first-child{ border-top: none; }
+.wt-rule-nama{ color: var(--text-2); }
+.wt-rule-kini{ font-family: var(--font-mono); font-weight: 600; color: var(--text-1); }
+.wt-rule-ambang{ color: var(--text-3); font-size: 10.5px; align-self: center; text-align: right; }
+
+/* ---------- modal pengaturan ---------- */
+.settings-modal{
+  display: none; position: fixed; inset: 0; z-index: 90;
+  background: rgba(4,6,10,.78); backdrop-filter: blur(6px);
+  overflow-y: auto; padding: 40px 16px;
+}
+.settings-modal.show{ display: flex; align-items: flex-start; justify-content: center; }
+.settings-box{
+  width: 100%; max-width: 620px;
+  background: var(--surface); border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg); padding: 22px 24px 26px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+}
+.settings-sub{ font-size: 12.5px; color: var(--text-2); margin: -10px 0 16px; line-height: 1.5; }
+.set-block{
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 12px;
+}
+.set-danger{ border-color: rgba(255,84,112,.3); }
+.set-title{ font-family: var(--font-display); font-size: 13.5px; font-weight: 700; margin-bottom: 6px; }
+.set-optional{
+  font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--text-3); margin-left: 6px;
+}
+.set-desc{ font-size: 12px; color: var(--text-2); line-height: 1.5; margin-bottom: 10px; }
+.set-row{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.set-row input[type=text]{
+  flex: 1; min-width: 180px;
+  background: var(--surface-raised); color: var(--text-1);
+  border: 1px solid var(--border-strong); border-radius: 8px;
+  padding: 8px 10px; font-size: 12.5px; font-family: var(--font-mono);
+}
+.set-choice{
+  background: var(--surface-raised); border: 1px solid var(--border);
+  color: var(--text-2); font-size: 12px; font-weight: 600;
+  padding: 6px 12px; border-radius: 999px; cursor: pointer;
+}
+.set-choice.active{ background: var(--violet-dim); color: var(--violet); border-color: rgba(139,124,246,.45); }
+.set-toggle{
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12.5px; color: var(--text-2); cursor: pointer;
+  margin-right: 14px;
+}
+.set-toggle input{ accent-color: var(--violet); width: 15px; height: 15px; }
+.set-note{ font-size: 11px; color: var(--text-3); }
+.set-weights{ display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.set-w-row{ display: grid; grid-template-columns: 92px 1fr; align-items: center; gap: 10px; font-size: 12.5px; }
+.set-w-row b{ font-family: var(--font-mono); color: var(--cyan); }
+.set-w-row input[type=range]{ width: 100%; accent-color: var(--violet); }
+
+/* ---------- di Mode Ringkas, panel v2.4 ikut disembunyikan ---------- */
+body.tldr-mode .bigchart-panel,
+body.tldr-mode .heatmap-panel,
+body.tldr-mode .watch-banner{ display: none !important; }

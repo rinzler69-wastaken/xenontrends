@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XT-CONF // Confluence Radar — 5-Pillar Macro WCCS</title>
+<meta name="description" content="Crypto morning brief berbasis Weighted Composite Confluence Score: 5 pilar sinyal (price action, momentum, sentimen, on-chain, derivatives) dengan metodologi transparan.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/brief-studio.css">
+<link rel="stylesheet" href="css/lab.css">
+<link rel="stylesheet" href="css/v24.css">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Layer 1: Navigation Top Bar -->
+  <nav class="nav-top-bar">
+    <a href="../index.html" class="nav-back-link">
+      <span>←</span>
+      <span>Terminal Portal</span>
+    </a>
+    <div class="system-badge-suite">
+      <span class="badge-system">XENONTRENDS ECOSYSTEM</span>
+      <span class="badge-system" style="color:var(--cyan);background:var(--cyan-dim);border-color:rgba(63,199,214,0.25);">CONFLUENCE ENGINE · v2.4</span>
+    </div>
+  </nav>
+
+  <!-- Layer 2: Executive Masthead -->
+  <header class="masthead">
+    <div class="brand-section">
+      <div class="brand-mark">🔥</div>
+      <div class="brand-info">
+        <div class="brand-title-row">
+          <h1 class="brand-title">Xenon<span class="accent-text">Trends</span> Confluence Radar</h1>
+          <span class="brand-ticker-tag">XT-CONF</span>
+        </div>
+        <div class="brand-sub">
+          Multi-asset macro &amp; morning-brief radar computing Weighted Composite Confluence Scores across 5 pillars
+        </div>
+        <div class="status-indicators">
+          <span class="status-item">
+            <span class="live-dot" id="liveDot"></span>
+            <span id="briefMeta">Confluence Brief · Siap dianalisis</span>
+          </span>
+          <div class="session-strip" id="sessionStrip"></div>
+        </div>
+      </div>
+    </div>
+    <div class="head-right masthead-right">
+      <div class="status-badge" id="statusBadge">
+        <span id="statusText">IDLE / READY</span>
+      </div>
+      <div class="confidence-wrap">
+        <div class="confidence-track"><div class="confidence-fill" id="confidenceFill"></div></div>
+        <div class="confidence-label" id="confidenceLabel">CONFIDENCE —%</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layer 3: Dedicated Action Toolbar (3 Groups) -->
+  <section class="action-toolbar toolbar" id="actionToolbar">
+    <!-- Group 1: Run / Refresh -->
+    <div class="toolbar-group toolbar-exec">
+      <button class="tbtn primary-confluence" id="runConfluenceBtn" title="Mulai kalkulasi 5 pilar Confluence WCCS">
+        <span>⚡</span>
+        <span>RUN CONFLUENCE</span>
+      </button>
+
+      <button class="tbtn" id="refreshBtn" title="Shortcut: R · Rerun analisis Confluence">
+        <span>↻</span>
+        <span>Refresh</span>
+      </button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Group 2: Actions -->
+    <div class="toolbar-group toolbar-actions">
+      <button class="tbtn" id="briefStudioBtn" title="Shortcut: B · Konten siap posting">
+        <span>📣</span>
+        <span>Brief Studio</span>
+      </button>
+
+      <button class="tbtn" id="extractBtn" title="Simpan ringkasan .txt lengkap">
+        <span>📤</span>
+        <span>Extract All Data</span>
+      </button>
+
+      <button class="tbtn" id="screenshotBtn" title="Simpan gambar PNG seluruh dashboard">
+        <span>🖼</span>
+        <span>Export PNG</span>
+      </button>
+
+      <button class="tbtn" id="tldrBtn" title="Shortcut: T · Mode Ringkas">
+        <span>📝</span>
+        <span>Mode Ringkas</span>
+      </button>
+
+      <button class="tbtn" id="watchTowerBtn" title="Shortcut: W · Alarm Otomatis">
+        <span>🗼</span>
+        <span>Menara Pengawas</span>
+      </button>
+
+      <span class="cache-badge" id="cacheBadge" style="display:none">● cached</span>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Group 3: Settings / Methodology -->
+    <div class="toolbar-group toolbar-meta">
+      <button class="tbtn" id="settingsBtn" title="Shortcut: S · Pengaturan sistem">
+        <span>⚙️</span>
+        <span>Pengaturan</span>
+      </button>
+
+      <button class="tbtn" id="methodologyBtn" title="Lihat metodologi dan formula WCCS 5 pilar">
+        <span>📐</span>
+        <span>Methodology</span>
+      </button>
+      <a class="methodology-link" id="methodologyLink" href="#" style="display:none">ⓘ Metodologi</a>
+    </div>
+  </section>
+
+  <!-- Progress Bar (Identical to XT-QUANT, with indeterminate alternating 1/4 bounce) -->
+  <div id="engineProgress" class="ep-wrap" style="display:none">
+    <div class="ep-bar-bg"><div class="ep-bar indeterminate"></div></div>
+    <div class="ep-label">
+      <span id="epStatusText">Mengambil data pasar (CoinGecko, Alternative.me, Derivatif)…</span>
+      <span id="epPhaseText" style="color:var(--cyan);font-weight:600;">CALCULATING</span>
+    </div>
+  </div>
+
+  <!-- Delta Engine: apa yang berubah sejak snapshot terakhir -->
+  <div class="delta-banner" id="deltaBanner"></div>
+
+  <!-- v2.4 Menara Pengawas: alarm transisi yang baru menyala siklus ini -->
+  <div class="watch-banner" id="watchBanner"></div>
+
+  <!-- Mode Ringkas: satu baris ringkasan -->
+  <div class="tldr-line" id="tldrLine">
+    <span class="badge-inline" id="tldrBadge">—</span>
+    <span id="tldrText">Memuat ringkasan…</span>
+  </div>
+
+  <div class="full-view">
+
+    <!-- ===================== METRICS (4 kartu utama, dipertahankan dari v1) ===================== -->
+    <section class="metrics-grid">
+      <!-- Card 1: BTC -->
+      <div class="card metric-card" id="cardBtc">
+        <div class="metric-top"><span class="metric-label">BTC</span></div>
+        <div class="metric-empty" id="metricEmptyBtc">
+          Klik <b>RUN CONFLUENCE</b> untuk memuat ranking momentum 10 koin
+        </div>
+        <div class="card-throbber" id="metricThrobberBtc" style="display:none">
+          <div class="card-ld"></div>
+          <span class="card-throbber-text">Memuat harga BTC…</span>
+        </div>
+        <div class="metric-data" id="metricDataBtc" style="display:none">
+          <div class="metric-value" id="btcPrice">$00,000</div>
+          <div class="metric-sub" id="btcChange">▼ 0.00%</div>
+          <svg class="spark" id="btcSpark" viewBox="0 0 100 28" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+
+      <!-- Card 2: ETH -->
+      <div class="card metric-card" id="cardEth">
+        <div class="metric-top"><span class="metric-label">ETH</span></div>
+        <div class="metric-empty" id="metricEmptyEth">
+          Klik <b>RUN CONFLUENCE</b> untuk memuat ranking momentum 10 koin
+        </div>
+        <div class="card-throbber" id="metricThrobberEth" style="display:none">
+          <div class="card-ld"></div>
+          <span class="card-throbber-text">Memuat harga ETH…</span>
+        </div>
+        <div class="metric-data" id="metricDataEth" style="display:none">
+          <div class="metric-value" id="ethPrice">$0,000</div>
+          <div class="metric-sub" id="ethChange">▼ 0.00%</div>
+          <svg class="spark" id="ethSpark" viewBox="0 0 100 28" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+
+      <!-- Card 3: Fear & Greed -->
+      <div class="card metric-card" id="cardFg">
+        <div class="metric-top">
+          <span class="metric-label">Fear &amp; Greed</span>
+          <span class="info-dot" data-tooltip="Indeks sentimen pasar 0–100. Pilar C dalam WCCS. Sumber: Alternative.me">i</span>
+        </div>
+        <div class="metric-empty" id="metricEmptyFg">
+          Klik <b>RUN CONFLUENCE</b> untuk memuat ranking momentum 10 koin
+        </div>
+        <div class="card-throbber" id="metricThrobberFg" style="display:none">
+          <div class="card-ld"></div>
+          <span class="card-throbber-text">Memuat sentimen F&amp;G…</span>
+        </div>
+        <div class="metric-data" id="metricDataFg" style="display:none">
+          <div class="fg-ring-wrap">
+            <svg class="fg-ring" id="fgRing" viewBox="0 0 40 40"></svg>
+            <div>
+              <div class="metric-value" id="fgValue" style="font-size:22px;">00</div>
+              <div class="metric-sub" id="fgLabel">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: RSI · 1H -->
+      <div class="card metric-card" id="cardRsi">
+        <div class="metric-top">
+          <span class="metric-label">RSI · 1H (BTC)</span>
+          <span class="info-dot" data-tooltip="Wilder's Smoothing Method periode 14 — konsisten dengan TradingView. Pilar B dalam WCCS.">i</span>
+        </div>
+        <div class="metric-empty" id="metricEmptyRsi">
+          Klik <b>RUN CONFLUENCE</b> untuk memuat ranking momentum 10 koin
+        </div>
+        <div class="card-throbber" id="metricThrobberRsi" style="display:none">
+          <div class="card-ld"></div>
+          <span class="card-throbber-text">Memuat RSI Wilder…</span>
+        </div>
+        <div class="metric-data" id="metricDataRsi" style="display:none">
+          <div class="metric-value" id="rsiValue" style="font-size:22px;">00</div>
+          <div class="metric-sub" id="rsiLabel">—</div>
+          <div class="rsi-bar-track">
+            <div class="rsi-zones">
+              <div class="rsi-zone-mark" style="left:30%"></div>
+              <div class="rsi-zone-mark" style="left:70%"></div>
+            </div>
+            <div class="rsi-bar-fill" id="rsiBarFill" style="width:0%; background:var(--text-3);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== MOMENTUM TABLE (10 koin, di atas bar confidence) ===================== -->
+    <div class="panel momentum-panel">
+      <div class="panel-head">
+        <span class="panel-title">🔥 MOMENTUM</span>
+        <span class="panel-meta">TOP 10 · RIIL</span>
+      </div>
+      <div class="panel-body">
+        <table class="momentum-table">
+          <thead>
+            <tr><th>#</th><th>Koin</th><th>Skor</th><th>24h</th><th>Tren</th></tr>
+          </thead>
+          <tbody id="momRows">
+            <tr><td colspan="5" class="empty" style="text-align:center;padding:26px;color:var(--text-3);font-family:var(--font-mono);font-size:11.5px;">Klik <b>RUN CONFLUENCE</b> untuk memuat ranking momentum 10 koin</td></tr>
+          </tbody>
+        </table>
+        <div class="divergence-flags-wrap" id="divergenceFlagsWrap">
+          <div class="dflag-title">🔍 Perlu diperhatikan</div>
+          <div id="divergenceFlagsContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== v2.4 GRAFIK BTC 30 HARI + LEVEL ===================== -->
+    <div class="panel bigchart-panel">
+      <div class="panel-head">
+        <span class="panel-title">📊 BTC · GRAFIK 30 HARI</span>
+        <span class="panel-meta">LEVEL TERUJI OVERLAY</span>
+      </div>
+      <div class="panel-body">
+        <div id="bigChartContent">
+          <div class="empty" style="text-align:center;padding:32px;color:var(--text-3);font-family:var(--font-mono);font-size:11.5px;">Grafik 30 hari siap dikalkulasi — klik <b>RUN CONFLUENCE</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== v2.4 HEATMAP PASAR ===================== -->
+    <div class="panel heatmap-panel">
+      <div class="panel-head">
+        <span class="panel-title">🗺 HEATMAP PASAR</span>
+        <span class="panel-meta">TOP 100 · 4 HORIZON</span>
+      </div>
+      <div class="panel-body">
+        <div id="heatmapContent">
+          <div class="empty" style="text-align:center;padding:32px;color:var(--text-3);font-family:var(--font-mono);font-size:11.5px;">Heatmap pasar Top 100 siap dimuat — klik <b>RUN CONFLUENCE</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== SIGNAL / CONFLUENCE BOX ===================== -->
+    <section class="signal-box" id="signalBox">
+      <div class="signal-icon" id="signalIcon">✦</div>
+      <div class="signal-body">
+        <div class="signal-eyebrow">
+          <span>SINYAL CONFLUENCE</span>
+          <span class="tag" id="signalTag">auto-generated</span>
+          <span class="crowding-badge" id="crowdingBadge"></span>
+        </div>
+        <div class="signal-text" id="signalText">Kalkulasi Confluence menanti eksekusi. Klik <b>RUN CONFLUENCE</b> pada toolbar untuk menarik data pasar dan mengagregasi 5 pilar real-time.</div>
+        <div class="estimate-disclaimer" id="estimateDisclaimer"></div>
+        <div class="invalidation-box">
+          <b>Yang perlu dipantau selanjutnya:</b> <span id="invalidationText">Menanti eksekusi pertama…</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Confidence interval visual -->
+    <div class="ci-wrap">
+      <div class="ci-label-row"><span>BEARISH</span><span>NETRAL</span><span>BULLISH</span></div>
+      <div class="ci-track" id="ciTrack"></div>
+    </div>
+
+    <!-- 5 Pillar summary chips -->
+    <div class="pillar-summary-grid" id="pillarSummary"></div>
+
+    <!-- v2.4 Mode Eksperimen Bobot: baris pembanding sandbox (muncul hanya saat aktif) -->
+    <div class="exp-row" id="expRow"></div>
+
+    <!-- Breakdown toggle + panel -->
+    <div class="breakdown-toggle-wrap">
+      <button class="breakdown-toggle" id="breakdownToggle">Lihat Breakdown →</button>
+    </div>
+    <div class="breakdown-panel" id="breakdownPanel">
+      <div class="breakdown-inner" id="breakdownRows"></div>
+    </div>
+
+    <!-- ===================== TWO COLUMN: ON-CHAIN / DERIVATIVES ===================== -->
+    <section class="three-col two-col-variant">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title"><span class="dot-icon"></span>ALIRAN ON-CHAIN</span>
+          <span class="panel-meta">WHALE · 24J</span>
+        </div>
+        <div class="panel-body">
+          <div class="heat-gauge">
+            <div class="heat-track" id="heatTrack">
+              <div class="heat-seg" style="width:50%; background: var(--up);"></div>
+              <div class="heat-seg" style="width:50%; background: var(--down);"></div>
+            </div>
+            <div class="heat-labels"><span>◀ Akumulasi</span><span>Distribusi ▶</span></div>
+          </div>
+          <div id="flowRows"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">⚡ DERIVATIVES</span>
+          <span class="panel-meta">PILAR E</span>
+        </div>
+        <div class="deriv-grid">
+          <div class="deriv-item">
+            <div class="deriv-item-label">Funding Rate BTC</div>
+            <div class="deriv-value" id="fundingRateValue">—</div>
+          </div>
+          <div class="deriv-item">
+            <div class="deriv-item-label">OI Change 24h</div>
+            <div class="deriv-value" id="oiChangeValue">—</div>
+          </div>
+        </div>
+        <div class="deriv-proxy-badge" id="derivProxyBadge"></div>
+        <div class="deriv-crowd-warn" id="derivCrowdWarn"></div>
+      </div>
+    </section>
+
+
+    <!-- ===================== LAB ANALITIK v2.3 ===================== -->
+    <section class="lab-wrap">
+      <div class="lab-masthead">
+        <div>
+          <div class="lab-title">🔬 LAB ANALITIK</div>
+          <div class="lab-subtitle-main">Delapan belas pembacaan tambahan dari sumber data gratis — semuanya overlay untuk membaca skor, bukan bahan skor.</div>
+        </div>
+      </div>
+
+      <div class="lab-nav" id="labNav">
+        <button class="lab-tab-btn active" data-lab="labMarket">🧭 Struktur Pasar</button>
+        <button class="lab-tab-btn" data-lab="labAnalytics">🔬 Analitik</button>
+        <button class="lab-tab-btn" data-lab="labRisk">🛡 Risiko</button>
+        <button class="lab-tab-btn" data-lab="labTools">🧪 Alat</button>
+        <button class="lab-tab-btn" data-lab="labHealth">🩺 Kesehatan</button>
+      </div>
+
+      <!-- ---------- TAB 1: STRUKTUR PASAR ---------- -->
+      <div class="lab-body active" id="labMarket">
+        <div class="lab-card lab-span-2">
+          <div class="lab-card-head"><span>Rezim Pasar</span><span class="lab-card-meta">DETEKTOR</span></div>
+          <div id="regimeContent"></div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Lebar Pasar</span><span class="lab-card-meta">BREADTH</span></div>
+          <div id="breadthContent"></div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Barometer Altseason</span><span class="lab-card-meta">ROTASI MODAL</span></div>
+          <div id="altseasonContent"></div>
+        </div>
+      </div>
+
+      <!-- ---------- TAB 2: ANALITIK ---------- -->
+      <div class="lab-body" id="labAnalytics">
+        <div class="lab-card lab-span-2">
+          <div class="lab-card-head"><span>Grid Multi-Timeframe</span><span class="lab-card-meta">1J · 24J · 7H · 30H</span></div>
+          <div id="mtfContent"></div>
+        </div>
+        <div class="lab-card lab-span-2">
+          <div class="lab-card-head"><span>Matriks Korelasi</span><span class="lab-card-meta">DIVERSIFIKASI SEMU</span></div>
+          <div id="corrContent"></div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Anomali Turnover</span><span class="lab-card-meta">VOLUME vs HARGA</span></div>
+          <div id="anomalyContent"></div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Heatmap Sesi</span><span class="lab-card-meta">30 HARI</span></div>
+          <div id="sessionContent"></div>
+        </div>
+      </div>
+
+      <!-- ---------- TAB 3: RISIKO ---------- -->
+      <div class="lab-body" id="labRisk">
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Volatilitas Terealisasi</span><span class="lab-card-meta">PERSENTIL</span></div>
+          <div id="volContent"></div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Drawdown</span><span class="lab-card-meta">JARAK DARI PUNCAK</span></div>
+          <div id="ddContent"></div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Level Otomatis</span><span class="lab-card-meta">PIVOT TERUJI</span></div>
+          <div id="levelsContent"></div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Posisi Leverage</span><span class="lab-card-meta">RITEL vs TOP TRADER</span></div>
+          <div id="positioningContent"></div>
+        </div>
+        <div class="lab-card lab-span-2">
+          <div class="lab-card-head"><span>Dry Powder</span><span class="lab-card-meta">PASOKAN STABLECOIN</span></div>
+          <div id="dryPowderContent"></div>
+        </div>
+      </div>
+
+      <!-- ---------- TAB 4: ALAT INTERAKTIF ---------- -->
+      <div class="lab-body" id="labTools">
+        <div class="lab-card lab-span-2">
+          <div class="lab-card-head"><span>Simulator "Bagaimana Kalau"</span><span class="lab-card-meta">MESIN WCCS YANG SAMA</span></div>
+          <div class="sim-controls">
+            <label class="sim-ctl">
+              <span class="sim-ctl-head">Harga BTC bergerak <b id="simBtcVal">+0.0%</b></span>
+              <input type="range" id="simBtc" min="-15" max="15" step="0.5" value="0">
+            </label>
+            <label class="sim-ctl">
+              <span class="sim-ctl-head">Fear &amp; Greed bergeser <b id="simFgVal">+0 poin</b></span>
+              <input type="range" id="simFg" min="-30" max="30" step="1" value="0">
+            </label>
+            <label class="sim-ctl">
+              <span class="sim-ctl-head">Funding rate dikali <b id="simFundingVal">1.0×</b></span>
+              <input type="range" id="simFunding" min="-3" max="5" step="0.1" value="1">
+            </label>
+            <button class="lab-btn" id="simReset">↺ Kembalikan ke kondisi sekarang</button>
+          </div>
+          <div id="scenarioResult"></div>
+        </div>
+
+        <div class="lab-card lab-span-2">
+          <div class="lab-card-head"><span>Kalkulator Ukuran Posisi</span><span class="lab-card-meta">ARITMETIKA RISIKO</span></div>
+          <div class="sizer-inputs">
+            <label class="sizer-field">
+              <span>Modal (USD)</span>
+              <input type="number" id="sizerEquity" value="1000" min="1" step="100">
+            </label>
+            <label class="sizer-field">
+              <span>Risiko per posisi (%)</span>
+              <input type="number" id="sizerRisk" value="1" min="0.1" max="100" step="0.1">
+            </label>
+            <label class="sizer-field">
+              <span>Jarak ke titik salah (%)</span>
+              <input type="number" id="sizerStop" value="3" min="0.1" step="0.1">
+            </label>
+          </div>
+          <div class="sizer-hint" id="sizerStopHint"></div>
+          <div id="sizerResult"></div>
+        </div>
+      </div>
+
+      <!-- ---------- TAB 5: KESEHATAN ---------- -->
+      <div class="lab-body" id="labHealth">
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Kesehatan Sumber Data</span><span class="lab-card-meta">TRANSPARANSI</span></div>
+          <div id="dataHealthContent"></div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-card-head"><span>Riwayat Skor WCCS</span><span class="lab-card-meta">7 HARI · LEDGER LOKAL</span></div>
+          <div id="wccsHistoryContent"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== REKAM JEJAK (self-backtesting, Bab 10.3) ===================== -->
+    <div class="context-radar-toggle-wrap">
+      <button class="breakdown-toggle" id="trackRecordToggle">📊 Rekam Jejak Sinyal →</button>
+    </div>
+    <div class="context-radar-panel" id="trackRecordPanel">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">📊 REKAM JEJAK</span>
+          <span class="panel-meta">SELF-EVALUATED</span>
+        </div>
+        <div class="panel-body">
+          <div id="trackRecordContent"></div>
+          <div class="baseline-progress-block">
+            <div class="track-stat-label" style="margin-bottom:6px;">Progress Baseline Live</div>
+            <div id="baselineProgressContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== v2.4 MENARA PENGAWAS ===================== -->
+    <div class="context-radar-toggle-wrap">
+      <button class="breakdown-toggle" id="watchTowerToggle">🗼 Menara Pengawas (alarm otomatis) →</button>
+    </div>
+    <div class="context-radar-panel" id="watchTowerPanel">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">🗼 MENARA PENGAWAS</span>
+          <span class="panel-meta">ALARM TRANSISI · RIWAYAT LOKAL</span>
+        </div>
+        <div class="panel-body">
+          <div id="watchTowerContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== RADAR KONTEKS (non-skor) ===================== -->
+    <div class="context-radar-toggle-wrap">
+      <button class="breakdown-toggle" id="contextRadarToggle">🛰 Radar Konteks (TVL & Berita) →</button>
+    </div>
+    <div class="context-radar-panel" id="contextRadarPanel">
+      <div class="panel">
+        <div class="panel-body context-radar-grid">
+          <div>
+            <div class="metric-label" style="margin-bottom:6px;">TVL DeFi</div>
+            <div class="tvl-value skel" id="tvlValue">$0.00B</div>
+          </div>
+          <div>
+            <div class="metric-label" style="margin-bottom:6px;">Berita Terkini</div>
+            <div id="newsList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /full-view -->
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <span class="fnote">🔥 ArgonPulse · The Confluence Engine · <b id="verFooter">v2.4</b></span>
+    <span class="fnote">Edukasi · bukan financial advice · DYOR · shortcut: B brief, T ringkas, W menara, S pengaturan, R refresh</span>
+  </footer>
+
+</div>
+
+<!-- ===================== METHODOLOGY MODAL (Bab 11.3) ===================== -->
+<div class="methodology-modal" id="methodologyModal">
+  <div class="methodology-box">
+    <div class="methodology-header">
+      <h2>ⓘ Metodologi</h2>
+      <button class="methodology-close" id="methodologyClose">✕</button>
+    </div>
+    <div id="methodologyContent"></div>
+  </div>
+</div>
+
+<!-- ===================== v2.4 PANEL PENGATURAN ===================== -->
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-box">
+    <div class="methodology-header">
+      <h2>⚙️ Pengaturan</h2>
+      <button class="methodology-close" id="settingsClose">✕</button>
+    </div>
+    <div class="settings-sub">
+      Pengaturan tersimpan di browser ini (localStorage) dan langsung berlaku — tanpa mengedit file.
+      Bobot resmi lima pilar sengaja tidak ada di sini; yang ada hanyalah eksperimen sandbox.
+    </div>
+    <div id="settingsContent"></div>
+  </div>
+</div>
+
+<!-- ===================== BRIEF STUDIO — pabrik konten grup ===================== -->
+<div class="bs-modal" id="briefStudioModal">
+  <div class="bs-box">
+    <div class="bs-header">
+      <div>
+        <h2>📣 Brief Studio</h2>
+        <div class="bs-header-sub">
+          Sebelas format konten dibangun dari pengambilan data yang sama persis dengan yang
+          tampil di layar — jadi teks yang kamu posting tidak akan pernah berbeda dari
+          screenshot-nya. Semuanya bisa disunting dulu sebelum disalin.
+        </div>
+      </div>
+      <button class="bs-close" id="bsClose">✕</button>
+    </div>
+
+    <div class="bs-tabs" id="bsTabs"></div>
+
+    <div class="bs-editor-wrap">
+      <textarea class="bs-textarea" id="bsTextarea" spellcheck="false"></textarea>
+      <div class="bs-editnote">
+        Teks ini bisa langsung diedit di sini. Pemeriksaan panjang dan nada berjalan ulang setiap kali kamu mengetik.
+      </div>
+    </div>
+
+    <div class="bs-counter-row">
+      <span class="bs-counter" id="bsCounter">0 / 0 karakter</span>
+      <span class="bs-counter-track"><span class="bs-counter-fill" id="bsCounterFill"></span></span>
+    </div>
+    <div class="bs-counter-note" id="bsCounterNote"></div>
+
+    <div class="bs-tone">
+      <div class="bs-tone-head">
+        <span class="bs-tone-title-main">Tone Guard</span>
+        <span class="bs-tone-badge" id="bsToneBadge">—</span>
+      </div>
+      <div id="bsToneDetail"></div>
+    </div>
+
+    <div class="bs-actions">
+      <button class="bs-btn primary" id="bsCopyBtn">📋 Salin ke clipboard</button>
+      <button class="bs-btn" id="bsRotateBtn">🔀 Ganti materi</button>
+      <button class="bs-btn" id="bsResetBtn" style="display:none;">↺ Kembalikan draf asli</button>
+      <button class="bs-btn" id="bsDownloadBtn">⬇ Unduh format ini</button>
+      <button class="bs-btn ghost" id="bsDownloadAllBtn">📦 Unduh paket lengkap (.md)</button>
+    </div>
+
+    <div class="bs-footnote">
+      Tone Guard memeriksa tiga hal: frasa yang menjanjikan kepastian, kehadiran bahasa
+      probabilistik, dan disclaimer. Ia tidak memblokir apa pun — keputusan akhir tetap di
+      tangan kamu, ia cuma memastikan kamu tahu apa yang sedang kamu posting.
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- v2.4 — perekam error boot: kalau modul gagal diinisialisasi (mis. file
+     tidak lengkap setelah ekstrak zip), pesannya tampil di layar — bukan
+     hanya di console browser yang tidak dibaca siapa pun. -->
+<script>
+window.__bootErrors = [];
+window.addEventListener('error', function(e){
+  window.__bootErrors.push(String(e.message) + ' @ ' + String(e.filename || '').split('/').pop() + ':' + e.lineno);
+  var el = document.getElementById('bootError');
+  if (el){ el.style.display = 'block'; el.textContent = '⚠ Gagal memuat modul: ' + e.message + ' — pastikan seluruh file ter-ekstrak utuh lalu reload (Ctrl+F5).'; }
+});
+window.addEventListener('unhandledrejection', function(e){
+  window.__bootErrors.push('rejection: ' + String(e.reason && e.reason.message || e.reason));
+});
+</script>
+<div class="boot-error" id="bootError" style="display:none"></div>
+
+<script src="js/vendor/html2canvas.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
