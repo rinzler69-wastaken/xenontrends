@@ -666,54 +666,124 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: 1.1rem;
+      padding-top: 0.85rem;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
-      min-height: 48px;
+      min-height: 52px;
     }
 
-    .launch-label {
-      font-weight: 700;
-      font-size: 0.88rem;
-      letter-spacing: -0.01em;
+    .launch-group {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      gap: 0.5rem;
-      transition: gap 0.25s ease;
+      flex: 1;
     }
 
-    .tool-blue .launch-label {
+    .launch-resting {
+      display: flex;
+      align-items: center;
+      transition: opacity 0.2s ease;
+    }
+
+    .launch-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      letter-spacing: -0.01em;
+      transition: color 0.2s ease;
+    }
+
+    .tool-blue .launch-title {
       color: #38bdf8;
     }
 
-    .tool-magenta .launch-label {
+    .tool-magenta .launch-title {
       color: #fb7185;
     }
 
-    .launch-text {
-      display: inline-block;
-      transition: color 0.2s ease, transform 0.2s ease, font-size 0.2s ease;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .launch-hints {
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+      justify-content: center;
+      animation: fadeInHint 0.2s ease;
     }
 
-    .launch-text.is-prompt {
-      font-size: 0.77rem;
+    @keyframes fadeInHint {
+      from { opacity: 0; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .launch-hint-line-1 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .tool-blue .launch-hint-line-1 {
+      color: #38bdf8;
+    }
+
+    .tool-magenta .launch-hint-line-1 {
+      color: #fb7185;
+    }
+
+    .launch-hint-line-2 {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #94a3b8;
+      letter-spacing: -0.01em;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .card-action .action-kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      line-height: 1;
+      padding: 0.16rem 0.44rem;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      transition: all 0.2s ease;
+    }
+
+    .tool-blue .action-kbd {
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      color: #00f2fe;
+    }
+
+    .tool-magenta .action-kbd {
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: #fb7185;
+    }
+
+    .card-action .hint-sep {
+      color: var(--text-dim);
       font-weight: 600;
-      letter-spacing: -0.015em;
-    }
-
-    .spotlight-card:hover .launch-label,
-    .spotlight-card.is-kbd-focused .launch-label {
-      gap: 0.75rem;
+      font-size: 0.68rem;
     }
 
     .launch-indicator {
       font-size: 1.05rem;
       transition: transform 0.25s ease;
       flex-shrink: 0;
+      margin-left: 0.75rem;
+    }
+
+    .tool-blue .launch-indicator {
+      color: #38bdf8;
+    }
+
+    .tool-magenta .launch-indicator {
+      color: #fb7185;
     }
 
     .spotlight-card:hover .launch-indicator,
@@ -835,10 +905,24 @@
                   </div>
                 </div>
                 <div class="card-action">
-                  <span class="launch-label">
-                    <span class="launch-text">Launch Radar</span>
-                    <span class="launch-indicator">→</span>
-                  </span>
+                  <div class="launch-group">
+                    <div class="launch-resting">
+                      <span class="launch-title">Launch Radar</span>
+                    </div>
+                    <div class="launch-hints" style="display: none;">
+                      <div class="launch-hint-line-1">
+                        <kbd class="action-kbd affordance-kbd">CLICK</kbd>
+                        <span>to Launch</span>
+                      </div>
+                      <div class="launch-hint-line-2">
+                        <kbd class="action-kbd">SHIFT</kbd>
+                        <span class="hint-sep">+</span>
+                        <kbd class="action-kbd affordance-kbd">CLICK</kbd>
+                        <span>to Launch in New Tab</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="launch-indicator">→</span>
                 </div>
               </div>
             </a>
@@ -866,10 +950,24 @@
                   </div>
                 </div>
                 <div class="card-action">
-                  <span class="launch-label">
-                    <span class="launch-text">Launch Screener</span>
-                    <span class="launch-indicator">→</span>
-                  </span>
+                  <div class="launch-group">
+                    <div class="launch-resting">
+                      <span class="launch-title">Launch Screener</span>
+                    </div>
+                    <div class="launch-hints" style="display: none;">
+                      <div class="launch-hint-line-1">
+                        <kbd class="action-kbd affordance-kbd">CLICK</kbd>
+                        <span>to Launch</span>
+                      </div>
+                      <div class="launch-hint-line-2">
+                        <kbd class="action-kbd">SHIFT</kbd>
+                        <span class="hint-sep">+</span>
+                        <kbd class="action-kbd affordance-kbd">CLICK</kbd>
+                        <span>to Launch in New Tab</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="launch-indicator">→</span>
                 </div>
               </div>
             </a>
@@ -1073,17 +1171,24 @@
     const cards = Array.from(document.querySelectorAll('.spotlight-card'));
     let kbdFocusedIndex = -1; // -1 = none, 0 = Confluence, 1 = Quantum
 
-    const TEXT_MOUSE_HOVER = 'Click to Launch, SHIFT + Click to Launch in a new tab';
-    const TEXT_KBD_FOCUS   = 'ENTER to Launch, SHIFT + ENTER to Launch in a new tab';
+    function setCardHintMode(card, mode) {
+      // mode: 'resting' | 'mouse' | 'kbd'
+      const restingEl = card.querySelector('.launch-resting');
+      const hintsEl = card.querySelector('.launch-hints');
+      if (!restingEl || !hintsEl) return;
 
-    function setCardText(card, text, isPrompt) {
-      const textSpan = card.querySelector('.launch-text');
-      if (!textSpan) return;
-      textSpan.textContent = text;
-      if (isPrompt) {
-        textSpan.classList.add('is-prompt');
+      if (mode === 'resting') {
+        restingEl.style.display = 'flex';
+        hintsEl.style.display = 'none';
       } else {
-        textSpan.classList.remove('is-prompt');
+        restingEl.style.display = 'none';
+        hintsEl.style.display = 'flex';
+
+        const kbdTags = hintsEl.querySelectorAll('.affordance-kbd');
+        const affordanceText = mode === 'kbd' ? 'ENTER' : 'CLICK';
+        kbdTags.forEach(tag => {
+          tag.textContent = affordanceText;
+        });
       }
     }
 
@@ -1096,11 +1201,11 @@
           card.style.setProperty('--spot-opacity', '1');
           card.style.setProperty('--mouse-x', '50%');
           card.style.setProperty('--mouse-y', '50%');
-          setCardText(card, TEXT_KBD_FOCUS, true);
+          setCardHintMode(card, 'kbd');
         } else {
           card.classList.remove('is-kbd-focused');
           card.style.setProperty('--spot-opacity', '0');
-          setCardText(card, card.getAttribute('data-default-text') || 'Launch', false);
+          setCardHintMode(card, 'resting');
         }
       });
     }
@@ -1111,7 +1216,7 @@
       cards.forEach(card => {
         card.classList.remove('is-kbd-focused');
         card.style.setProperty('--spot-opacity', '0');
-        setCardText(card, card.getAttribute('data-default-text') || 'Launch', false);
+        setCardHintMode(card, 'resting');
       });
     }
 
@@ -1138,13 +1243,13 @@
 
       card.addEventListener('mouseenter', () => {
         if (kbdFocusedIndex !== -1) clearKbdFocus();
-        setCardText(card, TEXT_MOUSE_HOVER, true);
+        setCardHintMode(card, 'mouse');
       });
 
       card.addEventListener('mouseleave', () => {
         card.style.setProperty('--spot-opacity', '0');
         if (kbdFocusedIndex === -1) {
-          setCardText(card, card.getAttribute('data-default-text') || 'Launch', false);
+          setCardHintMode(card, 'resting');
         }
       });
 
