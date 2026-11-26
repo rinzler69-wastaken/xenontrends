@@ -325,19 +325,18 @@
 
     backLink.addEventListener('click', (e) => {
       e.preventDefault();
+      // Signal any open portal tab to surface itself
       try {
         const bc = new BroadcastChannel('xt_portal_bus');
         bc.postMessage({ action: 'FOCUS_PORTAL' });
+        bc.close();
       } catch (err) {}
-
+      // Also try opener directly (works when opened via window.open)
       if (window.opener && !window.opener.closed) {
         try { window.opener.focus(); } catch (err) {}
       }
-
-      const portalWin = window.open('../index.html#expanded', 'xt_portal_main');
-      if (portalWin) {
-        portalWin.focus();
-      }
+      // Always navigate this tab back to the portal — guaranteed, no popup blocker
+      window.location.href = '../index.html#expanded';
     });
   } else {
     backLink.href = '../index.html#expanded';
