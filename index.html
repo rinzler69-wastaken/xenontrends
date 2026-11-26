@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>XenonTrends — Next-Gen Quantitative Crypto Terminal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg: #06070a;
@@ -26,14 +29,16 @@
       padding: 0;
     }
 
-    html, body {
+    html,
+    body {
       width: 100vw;
       height: 100vh;
       max-height: 100vh;
       background-color: var(--bg);
       color: var(--text-main);
       font-family: 'Plus Jakarta Sans', sans-serif;
-      overflow: hidden; /* Strictly zero scroll */
+      overflow: hidden;
+      /* Strictly zero scroll */
       position: relative;
     }
 
@@ -82,11 +87,11 @@
       transform: translate(-50%, -50%);
       width: 580px;
       height: 260px;
-      background: radial-gradient(ellipse at center, 
-        rgba(0, 242, 254, 0.25) 0%, 
-        rgba(147, 51, 234, 0.18) 35%, 
-        rgba(244, 63, 94, 0.12) 60%, 
-        transparent 80%);
+      background: radial-gradient(ellipse at center,
+          rgba(0, 242, 254, 0.25) 0%,
+          rgba(147, 51, 234, 0.18) 35%,
+          rgba(244, 63, 94, 0.12) 60%,
+          transparent 80%);
       filter: blur(65px);
       border-radius: 50%;
       pointer-events: none;
@@ -101,10 +106,12 @@
         transform: translate(-50%, -50%) scale(1) rotate(0deg);
         filter: blur(65px);
       }
+
       50% {
         transform: translate(-48%, -52%) scale(1.1) rotate(3deg);
         filter: blur(80px);
       }
+
       100% {
         transform: translate(-52%, -48%) scale(0.95) rotate(-3deg);
         filter: blur(60px);
@@ -126,7 +133,7 @@
       background: linear-gradient(135deg, #ffffff 20%, #e2e8f0 55%, #94a3b8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      text-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
       white-space: nowrap;
     }
 
@@ -193,8 +200,17 @@
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.3; transform: scale(0.8); }
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.3;
+        transform: scale(0.8);
+      }
     }
 
     /* 
@@ -419,7 +435,8 @@
     }
 
     body.is-revealed .desc-es-text {
-      transform: translateX(0); /* Unfolds cleanly concurrently with lerp */
+      transform: translateX(0);
+      /* Unfolds cleanly concurrently with lerp */
     }
 
     /* ==========================================================================
@@ -434,8 +451,8 @@
       opacity: 0;
       pointer-events: none;
       transform: translateY(30px);
-      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-                  transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 10;
     }
 
@@ -530,17 +547,17 @@
     }
 
     .spotlight-card.tool-blue::after {
-      background: radial-gradient(240px circle at var(--mouse-x) var(--mouse-y), 
-        rgba(0, 242, 254, 0.75) 0%, 
-        rgba(56, 189, 248, 0.55) 45%, 
-        transparent 75%);
+      background: radial-gradient(240px circle at var(--mouse-x) var(--mouse-y),
+          rgba(0, 242, 254, 0.75) 0%,
+          rgba(56, 189, 248, 0.55) 45%,
+          transparent 75%);
     }
 
     .spotlight-card.tool-magenta::after {
-      background: radial-gradient(240px circle at var(--mouse-x) var(--mouse-y), 
-        rgba(244, 63, 94, 0.75) 0%, 
-        rgba(192, 132, 252, 0.55) 45%, 
-        transparent 75%);
+      background: radial-gradient(240px circle at var(--mouse-x) var(--mouse-y),
+          rgba(244, 63, 94, 0.75) 0%,
+          rgba(192, 132, 252, 0.55) 45%,
+          transparent 75%);
     }
 
     /* Internal subtle glow fill */
@@ -555,15 +572,15 @@
     }
 
     .spotlight-card.tool-blue .card-spotlight-fill {
-      background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), 
-        rgba(0, 242, 254, 0.08) 0%, 
-        transparent 75%);
+      background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y),
+          rgba(0, 242, 254, 0.08) 0%,
+          transparent 75%);
     }
 
     .spotlight-card.tool-magenta .card-spotlight-fill {
-      background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), 
-        rgba(244, 63, 94, 0.09) 0%, 
-        transparent 75%);
+      background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y),
+          rgba(244, 63, 94, 0.09) 0%,
+          transparent 75%);
     }
 
     .card-content {
@@ -701,14 +718,21 @@
     .launch-hints {
       display: none;
       flex-direction: column;
-      gap: 7px;
+      gap: 10px;
       justify-content: center;
       animation: fadeInHint 0.2s ease;
     }
 
     @keyframes fadeInHint {
-      from { opacity: 0; transform: translateY(2px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(2px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .launch-hint-line-1,
@@ -717,7 +741,7 @@
       align-items: center;
       gap: 6px;
       font-size: 0.79rem;
-      font-weight: 600;
+      font-weight: 500;
       letter-spacing: -0.01em;
       line-height: 1.25;
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -725,12 +749,12 @@
 
     .tool-blue .launch-hint-line-1,
     .tool-blue .launch-hint-line-2 {
-      color: #38bdf8;
+      color: #C0C0C0;
     }
 
     .tool-magenta .launch-hint-line-1,
     .tool-magenta .launch-hint-line-2 {
-      color: #fb7185;
+      color: #C0C0C0;
     }
 
     .card-action .action-kbd {
@@ -789,19 +813,24 @@
       .app-stage {
         width: 94vw;
       }
-      .desc-curtain, .title-desc-separator {
+
+      .desc-curtain,
+      .title-desc-separator {
         display: none;
       }
+
       .tiles-grid {
         grid-template-columns: 1fr;
         gap: 1.25rem;
       }
+
       .tool-desc {
         min-height: auto;
       }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Background Interactive Dot Matrix -->
@@ -814,7 +843,7 @@
     <!-- Master App Stage (Fixed Geometry 960x520) -->
     <div class="app-stage" id="appStage">
       <div class="nebula-glow"></div>
-      
+
       <!-- ===================================================================
            LAYER 1: UNEXPANDED STATE (UES) PERIPHERALS
            =================================================================== -->
@@ -825,10 +854,12 @@
         </div>
 
         <!-- UES Ghost Reference Slot (Holds pure dead-center space) -->
-        <div id="uesCenterSlot" style="height: 60px; display: flex; align-items: center; justify-content: center; width: 100%;"></div>
+        <div id="uesCenterSlot"
+          style="height: 60px; display: flex; align-items: center; justify-content: center; width: 100%;"></div>
 
         <p class="desc-ues ues-fader">
-          Next-generation quantitative crypto terminal synthesizing 5-pillar composite market confluence with a 65-engine institutional economophysics screener.
+          Next-generation quantitative crypto terminal synthesizing 5-pillar composite market confluence with a
+          65-engine institutional economophysics screener.
         </p>
 
         <div class="cta-wrapper ues-fader">
@@ -844,7 +875,7 @@
            Rigid Header Suite: ESC, Divider, and Curtain stick to Title Slot!
            =================================================================== -->
       <div class="es-layer" id="esLayer">
-        
+
         <header class="es-header-suite">
           <!-- 1. ESC Button -->
           <button class="btn-esc" id="escBtn" title="Press Escape to collapse">
@@ -867,7 +898,8 @@
           <!-- 4. Hidden Room Curtain (Desc unfolds out from behind divider) -->
           <div class="desc-curtain">
             <p class="desc-es-text">
-              Next-generation quantitative crypto terminal synthesizing 5-pillar composite market confluence with a 65-engine institutional economophysics screener.
+              Next-generation quantitative crypto terminal synthesizing 5-pillar composite market confluence with a
+              65-engine institutional economophysics screener.
             </p>
           </div>
         </header>
@@ -877,7 +909,8 @@
           <div class="tiles-grid">
 
             <!-- Tool 1: Confluence Radar (Neon Blue) -->
-            <a href="confluence/index.html" class="spotlight-card tool-blue" id="cardConfluence" data-card-index="0" data-default-text="Launch Radar">
+            <a href="confluence/index.html" class="spotlight-card tool-blue" id="cardConfluence" data-card-index="0"
+              data-default-text="Launch Radar">
               <div class="card-spotlight-fill"></div>
               <div class="card-content">
                 <div class="card-top">
@@ -890,7 +923,8 @@
                   </div>
                   <h2 class="tool-title">Confluence Radar</h2>
                   <p class="tool-desc">
-                    Multi-asset macro & morning-brief radar computing Weighted Composite Confluence Scores (WCCS) across price action, momentum, sentiment, on-chain flows, and derivatives.
+                    Multi-asset macro & morning-brief radar computing Weighted Composite Confluence Scores (WCCS) across
+                    price action, momentum, sentiment, on-chain flows, and derivatives.
                   </p>
                   <div class="feature-tags">
                     <span class="tag-item">5-Pillar WCCS</span>
@@ -922,7 +956,8 @@
             </a>
 
             <!-- Tool 2: Quantum Screener (Neon Magenta) -->
-            <a href="quantum/index.html" class="spotlight-card tool-magenta" id="cardQuantum" data-card-index="1" data-default-text="Launch Screener">
+            <a href="quantum/index.html" class="spotlight-card tool-magenta" id="cardQuantum" data-card-index="1"
+              data-default-text="Launch Screener">
               <div class="card-spotlight-fill"></div>
               <div class="card-content">
                 <div class="card-top">
@@ -935,7 +970,8 @@
                   </div>
                   <h2 class="tool-title">Quantum Screener</h2>
                   <p class="tool-desc">
-                    Institutional algorithmic screener ranking Top 10 Bullish and Bearish regimes using 65 zero-dependency mathematical engines across 14 statistical families.
+                    Institutional algorithmic screener ranking Top 10 Bullish and Bearish regimes using 65
+                    zero-dependency mathematical engines across 14 statistical families.
                   </p>
                   <div class="feature-tags">
                     <span class="tag-item">65 Quant Engines</span>
@@ -1111,7 +1147,7 @@
       document.body.classList.add('is-revealed');
       try {
         history.replaceState(null, '', '#expanded');
-      } catch (err) {}
+      } catch (err) { }
     }
 
     function revealToolsDirect() {
@@ -1127,7 +1163,7 @@
       document.body.classList.remove('is-revealed');
       try {
         history.replaceState(null, '', window.location.pathname);
-      } catch (err) {}
+      } catch (err) { }
     }
 
     revealBtn.addEventListener('click', revealTools);
@@ -1164,6 +1200,19 @@
        ========================================================================== */
     const cards = Array.from(document.querySelectorAll('.spotlight-card'));
     let kbdFocusedIndex = -1; // -1 = none, 0 = Confluence, 1 = Quantum
+
+    // Opens a URL in a new tab (not a new window) reliably across browsers.
+    // window.open with no size params usually opens a tab, but programmatically
+    // creating and clicking an <a target="_blank"> is the most reliable approach.
+    function openInNewTab(url) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
 
     function setCardHintMode(card, mode) {
       // mode: 'resting' | 'mouse' | 'kbd'
@@ -1251,7 +1300,7 @@
         const href = card.getAttribute('href');
         if (e.shiftKey) {
           e.preventDefault();
-          window.open(href + '?tab=new', '_blank');
+          openInNewTab(href + '?tab=new');
         }
       });
     });
@@ -1295,7 +1344,7 @@
         const targetCard = cards[kbdFocusedIndex];
         const href = targetCard.getAttribute('href');
         if (e.shiftKey) {
-          window.open(href + '?tab=new', '_blank');
+          openInNewTab(href + '?tab=new');
         } else {
           window.location.href = href;
         }
@@ -1342,7 +1391,7 @@
             }
           }
         };
-      } catch (e) {}
+      } catch (e) { }
 
       window.addEventListener('beforeunload', () => {
         try {
@@ -1353,11 +1402,12 @@
             const bc = new BroadcastChannel('xt_portal_bus');
             bc.postMessage({ action: 'ELECT_MAIN', targetId: cur[0].id });
           }
-        } catch (e) {}
+        } catch (e) { }
       });
     }
 
     registerPortalTab();
   </script>
 </body>
+
 </html>
