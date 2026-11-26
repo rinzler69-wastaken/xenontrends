@@ -17,9 +17,9 @@
 
   <!-- Layer 1: Navigation Top Bar -->
   <nav class="nav-top-bar">
-    <a href="../index.html" class="nav-back-link">
-      <span>←</span>
-      <span>Terminal Portal</span>
+    <a href="../index.html#expanded" class="nav-back-link" id="portalBackLink">
+      <span class="back-arrow">←</span>
+      <span class="portal-label">Terminal Portal</span>
     </a>
     <div class="system-badge-suite">
       <span class="badge-system">XENONTRENDS ECOSYSTEM</span>
@@ -308,5 +308,42 @@
   document.title = 'XT-QUANT // Institutional Screener — ' + regLen + ' Engines';
 </script>
 <script src="app.js?v=31"></script>
+<script>
+(function() {
+  const backLink = document.getElementById('portalBackLink');
+  if (!backLink) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const isNewTab = urlParams.get('tab') === 'new' ||
+                   (window.opener && window.opener !== window) ||
+                   (window.history.length <= 1 && document.referrer.includes('index.html'));
+
+  if (isNewTab) {
+    backLink.classList.add('is-portal-tab');
+    const arrow = backLink.querySelector('.back-arrow');
+    if (arrow) arrow.style.display = 'none';
+    backLink.title = 'Switch to active Terminal Portal tab';
+
+    backLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      try {
+        const bc = new BroadcastChannel('xt_portal_bus');
+        bc.postMessage({ action: 'FOCUS_PORTAL' });
+      } catch (err) {}
+
+      if (window.opener && !window.opener.closed) {
+        try { window.opener.focus(); } catch (err) {}
+      }
+
+      const portalWin = window.open('../index.html#expanded', 'xt_portal_main');
+      if (portalWin) {
+        portalWin.focus();
+      }
+    });
+  } else {
+    backLink.href = '../index.html#expanded';
+  }
+})();
+</script>
 </body>
 </html>

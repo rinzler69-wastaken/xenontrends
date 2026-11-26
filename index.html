@@ -238,8 +238,8 @@
       display: inline-flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.9rem 2.1rem;
-      font-size: 0.98rem;
+      padding: 0.85rem 1.85rem 0.85rem 1.4rem;
+      font-size: 0.96rem;
       font-weight: 700;
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: #ffffff;
@@ -273,20 +273,27 @@
       box-shadow: 0 12px 30px -5px rgba(0, 242, 254, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 
-    .btn-reveal .icon-ring {
-      display: flex;
+    .btn-reveal .kbd-hint {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
-      background: rgba(0, 242, 254, 0.15);
-      border-radius: 50%;
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid rgba(0, 242, 254, 0.35);
       color: #00f2fe;
-      transition: transform 0.3s ease;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.18rem 0.52rem;
+      border-radius: 5px;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
     }
 
-    .btn-reveal:hover .icon-ring {
-      transform: rotate(90deg) scale(1.1);
+    .btn-reveal:hover .kbd-hint {
+      background: rgba(0, 242, 254, 0.25);
+      border-color: rgba(0, 242, 254, 0.65);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+      color: #fff;
     }
 
     /* ==========================================================================
@@ -467,7 +474,8 @@
       --spot-opacity: 0;
     }
 
-    .spotlight-card:hover {
+    .spotlight-card:hover,
+    .spotlight-card.is-kbd-focused {
       transform: translateY(-5px);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
     }
@@ -487,12 +495,23 @@
       transition: background 0.35s ease;
     }
 
-    .spotlight-card.tool-blue:hover::before {
+    .spotlight-card.tool-blue:hover::before,
+    .spotlight-card.tool-blue.is-kbd-focused::before {
       background: rgba(0, 242, 254, 0.50);
     }
 
-    .spotlight-card.tool-magenta:hover::before {
+    .spotlight-card.tool-magenta:hover::before,
+    .spotlight-card.tool-magenta.is-kbd-focused::before {
       background: rgba(244, 63, 94, 0.50);
+    }
+
+    .spotlight-card.is-kbd-focused {
+      outline: 2px solid rgba(0, 242, 254, 0.4);
+      outline-offset: 3px;
+    }
+
+    .spotlight-card.tool-magenta.is-kbd-focused {
+      outline-color: rgba(244, 63, 94, 0.4);
     }
 
     /* Proximity Border: 75% brightness spotlight near cursor */
@@ -649,15 +668,18 @@
       justify-content: space-between;
       padding-top: 1.1rem;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
+      min-height: 48px;
     }
 
     .launch-label {
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       letter-spacing: -0.01em;
       display: flex;
       align-items: center;
-      gap: 0.45rem;
+      justify-content: space-between;
+      width: 100%;
+      gap: 0.5rem;
       transition: gap 0.25s ease;
     }
 
@@ -669,16 +691,33 @@
       color: #fb7185;
     }
 
-    .spotlight-card:hover .launch-label {
+    .launch-text {
+      display: inline-block;
+      transition: color 0.2s ease, transform 0.2s ease, font-size 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .launch-text.is-prompt {
+      font-size: 0.77rem;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+    }
+
+    .spotlight-card:hover .launch-label,
+    .spotlight-card.is-kbd-focused .launch-label {
       gap: 0.75rem;
     }
 
     .launch-indicator {
       font-size: 1.05rem;
       transition: transform 0.25s ease;
+      flex-shrink: 0;
     }
 
-    .spotlight-card:hover .launch-indicator {
+    .spotlight-card:hover .launch-indicator,
+    .spotlight-card.is-kbd-focused .launch-indicator {
       transform: translateX(4px);
     }
 
@@ -730,8 +769,8 @@
 
         <div class="cta-wrapper ues-fader">
           <button class="btn-reveal" id="revealBtn">
+            <kbd class="kbd-hint">ENTER</kbd>
             <span>Explore Terminal Suite</span>
-            <span class="icon-ring">↓</span>
           </button>
         </div>
       </div>
@@ -774,7 +813,7 @@
           <div class="tiles-grid">
 
             <!-- Tool 1: Confluence Radar (Neon Blue) -->
-            <a href="confluence/index.html" class="spotlight-card tool-blue">
+            <a href="confluence/index.html" class="spotlight-card tool-blue" id="cardConfluence" data-card-index="0" data-default-text="Launch Radar">
               <div class="card-spotlight-fill"></div>
               <div class="card-content">
                 <div class="card-top">
@@ -796,13 +835,16 @@
                   </div>
                 </div>
                 <div class="card-action">
-                  <span class="launch-label">Launch Radar <span class="launch-indicator">→</span></span>
+                  <span class="launch-label">
+                    <span class="launch-text">Launch Radar</span>
+                    <span class="launch-indicator">→</span>
+                  </span>
                 </div>
               </div>
             </a>
 
             <!-- Tool 2: Quantum Screener (Neon Magenta) -->
-            <a href="quantum/index.html" class="spotlight-card tool-magenta">
+            <a href="quantum/index.html" class="spotlight-card tool-magenta" id="cardQuantum" data-card-index="1" data-default-text="Launch Screener">
               <div class="card-spotlight-fill"></div>
               <div class="card-content">
                 <div class="card-top">
@@ -824,7 +866,10 @@
                   </div>
                 </div>
                 <div class="card-action">
-                  <span class="launch-label">Launch Screener <span class="launch-indicator">→</span></span>
+                  <span class="launch-label">
+                    <span class="launch-text">Launch Screener</span>
+                    <span class="launch-indicator">→</span>
+                  </span>
                 </div>
               </div>
             </a>
@@ -961,12 +1006,59 @@
       if (!document.body.classList.contains('is-revealed')) {
         theTitleAnchor.style.transition = 'none';
         theTitleAnchor.style.transform = uesTransform;
+      } else {
+        theTitleAnchor.style.transition = 'none';
+        theTitleAnchor.style.transform = esTransform;
       }
     }
 
+    function revealTools() {
+      if (document.body.classList.contains('is-revealed')) return;
+      theTitleAnchor.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)';
+      theTitleAnchor.style.transform = esTransform;
+      document.body.classList.add('is-revealed');
+      try {
+        history.replaceState(null, '', '#expanded');
+      } catch (err) {}
+    }
+
+    function revealToolsDirect() {
+      document.body.classList.add('is-revealed');
+      theTitleAnchor.style.transition = 'none';
+      theTitleAnchor.style.transform = esTransform;
+    }
+
+    function collapseTools() {
+      if (!document.body.classList.contains('is-revealed')) return;
+      theTitleAnchor.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)';
+      theTitleAnchor.style.transform = uesTransform;
+      document.body.classList.remove('is-revealed');
+      try {
+        history.replaceState(null, '', window.location.pathname);
+      } catch (err) {}
+    }
+
+    revealBtn.addEventListener('click', revealTools);
+    escBtn.addEventListener('click', collapseTools);
+
+    // Initial check for #expanded hash on direct load
+    if (window.location.hash === '#expanded') {
+      revealToolsDirect();
+    }
+
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#expanded') {
+        revealToolsDirect();
+      } else if (window.location.hash === '') {
+        collapseTools();
+      }
+    });
+
     // Initialize initial coordinate calculation
     window.addEventListener('DOMContentLoaded', () => {
-      // Allow DOM layout pass
+      if (window.location.hash === '#expanded') {
+        revealToolsDirect();
+      }
       setTimeout(updateLerpCoordinates, 20);
     });
 
@@ -975,36 +1067,66 @@
       document.fonts.ready.then(updateLerpCoordinates);
     }
 
-    function revealTools() {
-      if (document.body.classList.contains('is-revealed')) return;
-      theTitleAnchor.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)';
-      theTitleAnchor.style.transform = esTransform;
-      document.body.classList.add('is-revealed');
+    /* ==========================================================================
+       3. SPOTLIGHT BORDER, KEYBOARD NAVIGATION & DYNAMIC LAUNCH LABELS
+       ========================================================================== */
+    const cards = Array.from(document.querySelectorAll('.spotlight-card'));
+    let kbdFocusedIndex = -1; // -1 = none, 0 = Confluence, 1 = Quantum
+
+    const TEXT_MOUSE_HOVER = 'Click to Launch, SHIFT + Click to Launch in a new tab';
+    const TEXT_KBD_FOCUS   = 'ENTER to Launch, SHIFT + ENTER to Launch in a new tab';
+
+    function setCardText(card, text, isPrompt) {
+      const textSpan = card.querySelector('.launch-text');
+      if (!textSpan) return;
+      textSpan.textContent = text;
+      if (isPrompt) {
+        textSpan.classList.add('is-prompt');
+      } else {
+        textSpan.classList.remove('is-prompt');
+      }
     }
 
-    function collapseTools() {
-      if (!document.body.classList.contains('is-revealed')) return;
-      theTitleAnchor.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)';
-      theTitleAnchor.style.transform = uesTransform;
-      document.body.classList.remove('is-revealed');
+    function setKbdFocus(index) {
+      if (index < 0 || index >= cards.length) return;
+      kbdFocusedIndex = index;
+      cards.forEach((card, idx) => {
+        if (idx === index) {
+          card.classList.add('is-kbd-focused');
+          card.style.setProperty('--spot-opacity', '1');
+          card.style.setProperty('--mouse-x', '50%');
+          card.style.setProperty('--mouse-y', '50%');
+          setCardText(card, TEXT_KBD_FOCUS, true);
+        } else {
+          card.classList.remove('is-kbd-focused');
+          card.style.setProperty('--spot-opacity', '0');
+          setCardText(card, card.getAttribute('data-default-text') || 'Launch', false);
+        }
+      });
     }
 
-    revealBtn.addEventListener('click', revealTools);
-    escBtn.addEventListener('click', collapseTools);
+    function clearKbdFocus() {
+      if (kbdFocusedIndex === -1) return;
+      kbdFocusedIndex = -1;
+      cards.forEach(card => {
+        card.classList.remove('is-kbd-focused');
+        card.style.setProperty('--spot-opacity', '0');
+        setCardText(card, card.getAttribute('data-default-text') || 'Launch', false);
+      });
+    }
 
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' || e.key === 'Esc') {
-        collapseTools();
+    // Cancel keyboard-induced focus state upon real mouse movement
+    window.addEventListener('mousemove', (e) => {
+      if (e.movementX !== 0 || e.movementY !== 0) {
+        if (kbdFocusedIndex !== -1) {
+          clearKbdFocus();
+        }
       }
     });
 
-    /* ==========================================================================
-       3. SPOTLIGHT BORDER & CURSOR TRACKING
-       ========================================================================== */
-    const cards = document.querySelectorAll('.spotlight-card');
-
-    cards.forEach(card => {
+    cards.forEach((card, idx) => {
       card.addEventListener('mousemove', (e) => {
+        if (kbdFocusedIndex !== -1) clearKbdFocus();
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -1014,10 +1136,129 @@
         card.style.setProperty('--spot-opacity', '1');
       });
 
+      card.addEventListener('mouseenter', () => {
+        if (kbdFocusedIndex !== -1) clearKbdFocus();
+        setCardText(card, TEXT_MOUSE_HOVER, true);
+      });
+
       card.addEventListener('mouseleave', () => {
         card.style.setProperty('--spot-opacity', '0');
+        if (kbdFocusedIndex === -1) {
+          setCardText(card, card.getAttribute('data-default-text') || 'Launch', false);
+        }
+      });
+
+      card.addEventListener('click', (e) => {
+        const href = card.getAttribute('href');
+        if (e.shiftKey) {
+          e.preventDefault();
+          window.open(href + '?tab=new', '_blank');
+        }
       });
     });
+
+    // Keyboard listener for navigation and actions
+    window.addEventListener('keydown', (e) => {
+      const isRevealed = document.body.classList.contains('is-revealed');
+
+      // 1. In Unexpanded State (UES): ENTER reveals suite
+      if (!isRevealed) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          revealTools();
+        }
+        return;
+      }
+
+      // 2. In Expanded State (ES):
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        collapseTools();
+        clearKbdFocus();
+        return;
+      }
+
+      // Arrow navigation
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setKbdFocus(0);
+        return;
+      }
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setKbdFocus(1);
+        return;
+      }
+
+      // Enter on focused card
+      if (e.key === 'Enter' && kbdFocusedIndex !== -1) {
+        e.preventDefault();
+        const targetCard = cards[kbdFocusedIndex];
+        const href = targetCard.getAttribute('href');
+        if (e.shiftKey) {
+          window.open(href + '?tab=new', '_blank');
+        } else {
+          window.location.href = href;
+        }
+      }
+    });
+
+    /* ==========================================================================
+       4. CROSS-TAB PORTAL REGISTRY (Earliest Active Tab Management)
+       ========================================================================== */
+    const PORTAL_REG_KEY = 'xt_portal_tabs';
+    const myPortalTabId = 'portal_' + Math.random().toString(36).substring(2, 9);
+    const myPortalBirth = Date.now();
+
+    function registerPortalTab() {
+      let list = [];
+      try {
+        list = JSON.parse(localStorage.getItem(PORTAL_REG_KEY) || '[]');
+      } catch (err) { list = []; }
+
+      const now = Date.now();
+      // Filter out entries older than 24h
+      list = list.filter(item => (now - item.birth) < 86400000);
+      list.push({ id: myPortalTabId, birth: myPortalBirth });
+      list.sort((a, b) => a.birth - b.birth);
+      localStorage.setItem(PORTAL_REG_KEY, JSON.stringify(list));
+
+      // If this is the earliest active portal tab, claim 'xt_portal_main'
+      if (list[0].id === myPortalTabId) {
+        window.name = 'xt_portal_main';
+      }
+
+      // Listen on BroadcastChannel
+      try {
+        const channel = new BroadcastChannel('xt_portal_bus');
+        channel.onmessage = (event) => {
+          const msg = event.data || {};
+          if (msg.action === 'ELECT_MAIN' && msg.targetId === myPortalTabId) {
+            window.name = 'xt_portal_main';
+          }
+          if (msg.action === 'FOCUS_PORTAL') {
+            if (window.name === 'xt_portal_main') {
+              window.focus();
+              revealToolsDirect();
+            }
+          }
+        };
+      } catch (e) {}
+
+      window.addEventListener('beforeunload', () => {
+        try {
+          let cur = JSON.parse(localStorage.getItem(PORTAL_REG_KEY) || '[]');
+          cur = cur.filter(item => item.id !== myPortalTabId);
+          localStorage.setItem(PORTAL_REG_KEY, JSON.stringify(cur));
+          if (cur.length > 0) {
+            const bc = new BroadcastChannel('xt_portal_bus');
+            bc.postMessage({ action: 'ELECT_MAIN', targetId: cur[0].id });
+          }
+        } catch (e) {}
+      });
+    }
+
+    registerPortalTab();
   </script>
 </body>
 </html>
