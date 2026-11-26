@@ -315,8 +315,7 @@
 
   const urlParams = new URLSearchParams(window.location.search);
   const isNewTab = urlParams.get('tab') === 'new' ||
-                   (window.opener && window.opener !== window) ||
-                   (window.history.length <= 1 && document.referrer.includes('index.html'));
+                   (window.opener && window.opener !== window);
 
   if (isNewTab) {
     backLink.classList.add('is-portal-tab');
