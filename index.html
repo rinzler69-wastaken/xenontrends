@@ -701,7 +701,7 @@
     .launch-hints {
       display: none;
       flex-direction: column;
-      gap: 3px;
+      gap: 7px;
       justify-content: center;
       animation: fadeInHint 0.2s ease;
     }
@@ -711,32 +711,26 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .launch-hint-line-1 {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .tool-blue .launch-hint-line-1 {
-      color: #38bdf8;
-    }
-
-    .tool-magenta .launch-hint-line-1 {
-      color: #fb7185;
-    }
-
+    .launch-hint-line-1,
     .launch-hint-line-2 {
       display: flex;
       align-items: center;
-      gap: 4px;
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: #94a3b8;
+      gap: 6px;
+      font-size: 0.79rem;
+      font-weight: 600;
       letter-spacing: -0.01em;
+      line-height: 1.25;
       font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .tool-blue .launch-hint-line-1,
+    .tool-blue .launch-hint-line-2 {
+      color: #38bdf8;
+    }
+
+    .tool-magenta .launch-hint-line-1,
+    .tool-magenta .launch-hint-line-2 {
+      color: #fb7185;
     }
 
     .card-action .action-kbd {
