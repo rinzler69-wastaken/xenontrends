@@ -943,7 +943,7 @@
                         <span>to Launch</span>
                       </div>
                       <div class="launch-hint-line-2">
-                        <kbd class="action-kbd">SHIFT</kbd>
+                        <kbd class="action-kbd">ALT</kbd>
                         <span class="hint-sep">+</span>
                         <kbd class="action-kbd affordance-kbd">CLICK</kbd>
                         <span>to Launch in New Tab</span>
@@ -990,7 +990,7 @@
                         <span>to Launch</span>
                       </div>
                       <div class="launch-hint-line-2">
-                        <kbd class="action-kbd">SHIFT</kbd>
+                        <kbd class="action-kbd">ALT</kbd>
                         <span class="hint-sep">+</span>
                         <kbd class="action-kbd affordance-kbd">CLICK</kbd>
                         <span>to Launch in New Tab</span>
@@ -1202,8 +1202,8 @@
     let kbdFocusedIndex = -1; // -1 = none, 0 = Confluence, 1 = Quantum
 
     // Opens a URL in a new TAB (never a new window).
-    // We dispatch a plain MouseEvent with no Shift modifier so the browser
-    // doesn't inherit the held Shift key and open a window instead.
+    // We dispatch a plain MouseEvent with no Alt modifier so the browser
+    // doesn't inherit the held Alt key and open a window instead.
     function openInNewTab(url) {
       const a = document.createElement('a');
       a.href = url;
@@ -1214,7 +1214,7 @@
         bubbles: true,
         cancelable: true,
         ctrlKey: false,
-        shiftKey: false,  // explicitly clear Shift so browser opens a tab, not a window
+        shiftKey: false,  // explicitly clear Alt so browser opens a tab, not a window
         metaKey: false
       }));
       document.body.removeChild(a);
@@ -1304,7 +1304,7 @@
 
       card.addEventListener('click', (e) => {
         const href = card.getAttribute('href');
-        if (e.shiftKey) {
+        if (e.altKey) {
           e.preventDefault();
           openInNewTab(href + '?tab=new');
         }
@@ -1349,7 +1349,7 @@
         e.preventDefault();
         const targetCard = cards[kbdFocusedIndex];
         const href = targetCard.getAttribute('href');
-        if (e.shiftKey) {
+        if (e.altKey) {
           openInNewTab(href + '?tab=new');
         } else {
           window.location.href = href;
